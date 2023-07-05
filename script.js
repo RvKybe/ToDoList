@@ -298,7 +298,7 @@ function saveChangedTask(i) {
         document.getElementById(`textNode${i}`).value = filteredTasks[i]['Название задачи'];
     }
     if (newValue.trim() === ''){
-        alert('Вы не можете оставить название поле пустым')
+        alert('Вы не можете оставить название поле пустым ')
     }
 }
 
