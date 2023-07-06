@@ -197,7 +197,7 @@ function outputConstructor() {
             </div>
             <div class="center-of-item" 
                  style="background-color: ${color}; ">
-                <div class="left-side-of-center-of-item" 
+                <div class="left-side-of-item-mid" 
                      style="background-color: ${color}">
                     <div class="task-name-of-item" 
                          id="div_to_change${i}" 
@@ -207,7 +207,7 @@ function outputConstructor() {
                     <textarea
                             rows="7"
                             maxlength="100"
-                            class="text_out" 
+                            class="task-name-textarea" 
                             style="background-color: ${color}" 
                             id="textNode${i}" 
                             oninput="auto_grow(this)"
@@ -412,7 +412,7 @@ function switchCase(object, key, value = -1 ){
 async function request(method, body,id){
     const origin = "http://127.0.0.1:3000/items";
 
-    changeDisplay('loading','block');
+    changeDisplay('loading','flex');
     changeOpacity(0.4);
     if (method === "GET") {
         let resp = await fetch(origin,{
@@ -460,8 +460,11 @@ function changeOpacity(targetOpacity){
  * @param element
  */
 function auto_grow(element) {
+    element.style.height = '5px';
     if (element.scrollHeight <= 150) {
         element.style.height = (element.scrollHeight) + "px";
+    } else {
+        element.style.height = '150px';
     }
 }
 
