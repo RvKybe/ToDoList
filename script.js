@@ -226,21 +226,21 @@ function outputConstructor() {
                     class="statusButton"
                             onclick='taskDiff(${i},1)'
                             id="tick${i}">
-                    <img src='icons8-галочка-13.png' 
+                    <img src='tickIcon.png' 
                          alt="">
                     </button>
                     <button type="button" 
                             class="statusButton"
                             onclick='taskDiff(${i},-1)' 
                             id="cross${i}">
-                    <img src='icons8-крестик-12.png' 
+                    <img src='crossIcon.png' 
                          alt="">
                     </button>
                 </div>
             </div>
             <div class="right-side-of-item">
                 <button onclick="del_item(${i})">
-                    <img src="icons8-очистить-корзину-50.png" 
+                    <img src="deleteIcon.png" 
                          alt="">
                 </button>
             </div>
