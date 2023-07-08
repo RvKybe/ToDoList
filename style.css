@@ -78,15 +78,12 @@ body{
     width: 100%;
     font-size: 11px;
 }
-#searchTaskName{
+#search-task-name{
     width: 80%;
 }
-#inputTaskName{
+#input-task-name{
     margin-left: 10%;
     width: 50%;
-}
-#addbutton{
-    margin-left: 3%;
 }
 .task-name-textarea{
     display:none;
@@ -124,6 +121,6 @@ h2 {
     display: none;
     z-index: 8;
 }
-.statusButton{
+.status-button{
     width: 45px;
 }

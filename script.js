@@ -1,11 +1,12 @@
 let tasks = []; // основной массив
 let filteredTasks = []; // "внешний" массив
-const div = document.getElementById('output');
 const mainDiv = document.getElementById('main');
+const div = document.getElementById('output');
 let sort = "date";
 
 /**
- * Запускает фильтрацию и сортировку задач
+ * Функция, запускающая фильтрацию и сортировку
+ * @param sortParameter
  */
 function launchSort(sortParameter){
     (sortParameter === "date") ? sort = "date" : sort = "priority";
@@ -16,8 +17,8 @@ function launchSort(sortParameter){
  * добавление задачи с проверкой на существующую задачу
  */
 function addTask() {
-    const taskName = document.getElementById("inputTaskName");
-    const comboBoxPriority = document.getElementById("priorityAddTask");
+    const taskName = document.getElementById("input-task-name");
+    const comboBoxPriority = document.getElementById("priority-add-task");
     const comboBoxPriorityValue = comboBoxPriority.options[comboBoxPriority.selectedIndex].value;
     if (taskName.value.trim() === '') {
         alert('Введите название задачи');
@@ -62,9 +63,9 @@ function searchDuplicate(taskName, priority, index){
  * Сортировка по дате
  */
 function sortByDate() {
-    const sortComboBoxDate = document.getElementById('sortDate');
+    const sortComboBoxDate = document.getElementById('sort-date');
     const sortComboBoxDateValue = sortComboBoxDate.options[sortComboBoxDate.selectedIndex].value;
-    const sortComboBoxPriority = document.getElementById('sortPriority');
+    const sortComboBoxPriority = document.getElementById('sort-priority');
     const sortComboBoxPriorityValue = sortComboBoxPriority.options[sortComboBoxPriority.selectedIndex].value;
     let extraSortMode;
     (sortComboBoxPriorityValue === 'fromHigh') ? extraSortMode = 1 : extraSortMode = -1;
@@ -75,9 +76,9 @@ function sortByDate() {
  * Сортировка по приоритету
  */
 function sortByPriority() {
-    const sortComboBoxPriority = document.getElementById('sortPriority');
+    const sortComboBoxPriority = document.getElementById('sort-priority');
     const sortComboBoxPriorityValue = sortComboBoxPriority.options[sortComboBoxPriority.selectedIndex].value;
-    const sortComboBoxDate = document.getElementById('sortDate');
+    const sortComboBoxDate = document.getElementById('sort-date');
     const sortComboBoxDateValue = sortComboBoxDate.options[sortComboBoxDate.selectedIndex].value;
     let extraSortMode;
     (sortComboBoxDateValue === 'fromNew') ? extraSortMode = 1 : extraSortMode = -1;
@@ -88,7 +89,7 @@ function sortByPriority() {
  *Фильтр подходящих задач
  */
 function filterTasks() {
-    const textSearch = document.getElementById('searchTaskName');
+    const textSearch = document.getElementById('search-task-name');
     const filterPriority = document.getElementById("filterPriority")
     const filterPriorityValue = filterPriority.options[filterPriority.selectedIndex].value;
     const checkActive = document.getElementById('checkboxRejected');
@@ -223,14 +224,14 @@ function outputConstructor() {
                 </div>
                 <div class="div-with-status-buttons">
                     <button type="button" 
-                    class="statusButton"
+                    class="status-button"
                             onclick='taskDiff(${i},1)'
                             id="tick${i}">
                     <img src='tickIcon.png' 
                          alt="">
                     </button>
                     <button type="button" 
-                            class="statusButton"
+                            class="status-button"
                             onclick='taskDiff(${i},-1)' 
                             id="cross${i}">
                     <img src='crossIcon.png' 
@@ -267,9 +268,9 @@ function changeDisplay(element, targetStatus) {
  * Чистка полей ввода названия задачи и комбобокса приоритета задачи
  */
 function clearInput(){
-    const element = document.getElementById('inputTaskName');
+    const element = document.getElementById('input-task-name');
     element.value = "";
-    const element1 = document.getElementById('priorityAddTask');
+    const element1 = document.getElementById('priority-add-task');
     element1.value = '2';
 }
 
@@ -411,7 +412,6 @@ function switchCase(object, key, value = -1 ){
  */
 async function request(method, body,id){
     const origin = "http://127.0.0.1:3000/items";
-
     changeDisplay('loading','flex');
     changeOpacity(0.4);
     if (method === "GET") {
