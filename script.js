@@ -3,27 +3,35 @@ let filteredTasks = []; // "внешний" массив
 const mainDiv = document.getElementById('main');
 const div = document.getElementById('output');
 let sort = "date";
+outputConstructor();
 
 /**
  * Функция, запускающая фильтрацию и сортировку
  * @param sortParameter
+ * @param mode - нужен для отделения сортировки по нажатию кнопки от сортировки при конструировании вывода
  */
-function launchSort(sortParameter){
+function launchSort(sortParameter , mode = true) {
     (sortParameter === "date") ? sort = "date" : sort = "priority";
-    filterTasks();
+    if (sort === "date"){
+        sortByDate();
+    } else {
+        sortByPriority();
+    }
+    if (mode){
+        outputConstructor();
+    }
 }
 
 /**
  * добавление задачи с проверкой на существующую задачу
  */
 function addTask() {
-
     const taskName = document.getElementById("input-task-name");
     const comboBoxPriority = document.getElementById("priority-add-task");
     const comboBoxPriorityValue = comboBoxPriority.options[comboBoxPriority.selectedIndex].value;
-    if (taskName.value.trim() === '') {
+    if (!taskName.value.trim()) {
         alert('Введите название задачи');
-    } else if (tasks.length === 0 || searchDuplicate(taskName.value, comboBoxPriorityValue, -1)) {
+    } else if (!tasks.length || !searchDuplicate(taskName.value, comboBoxPriorityValue, -1)) {
         const innerObject = {};
         const status = 2;
         const time = new Date();
@@ -33,10 +41,9 @@ function addTask() {
         innerObject['Время для вывода'] = outputTime;
         innerObject['Статус'] = status;
         innerObject['time'] = time;
+
         request('POST', innerObject, 0)
             .then(() => {
-                changeDisplay('loading','none');
-                changeOpacity(1);
                 filterTasks();
             });
     }
@@ -50,20 +57,21 @@ function addTask() {
  * @param index - индекс задачи на изменение в filteredTasks
  * @returns {boolean}
  */
-function searchDuplicate(taskName, priority, index){
+function searchDuplicate(taskName, priority, index) {
     for (let j = 0; j<tasks.length; j++) {
-        if (tasks[j]['Название задачи'].trim() === taskName.trim() && tasks[j]['Приоритет'] === priority && index !== j){
+        if (tasks[j]['Название задачи'].trim() === taskName.trim() && tasks[j]['Приоритет'] === priority && index !== j) {
             alert('Такая задача уже существует');
-            return false;
+            return true;
         }
     }
-    return true;
+    return false;
 }
 
 /**
  * Сортировка по дате
  */
 function sortByDate() {
+
     const sortComboBoxDate = document.getElementById('sort-date');
     const sortComboBoxDateValue = sortComboBoxDate.options[sortComboBoxDate.selectedIndex].value;
     const sortComboBoxPriority = document.getElementById('sort-priority');
@@ -91,36 +99,31 @@ function sortByPriority() {
  */
 function filterTasks() {
     const textSearch = document.getElementById('search-task-name');
-    const filterPriority = document.getElementById("filter-priority")
+    const filterPriority = document.getElementById("filter-priority");
     const filterPriorityValue = filterPriority.options[filterPriority.selectedIndex].value;
     const checkActive = document.getElementById('checkbox-rejected');
     const checkRejected = document.getElementById('checkbox-active');
     const checkDone = document.getElementById('checkbox-done');
-
     request('GET',"0",0)
         .then(() => {
+            const a = [];
+            if (checkRejected.checked) {
+                a.push(1);
+            }
+            if (checkActive.checked) {
+                a.push(2);
+            }
+            if (checkDone.checked) {
+                a.push(3);
+            }
             filteredTasks = tasks.filter((task) => {
-                const a = [];
-                if (checkRejected.checked) {
-                    a.push(1);
-                }
-                if (checkActive.checked) {
-                    a.push(2);
-                }
-                if (checkDone.checked) {
-                    a.push(3);
-                }
                 return a.includes(task['Статус']) &&
                     (textSearch.value.trim === '' || task['Название задачи'].toLowerCase().indexOf(textSearch.value.toLowerCase()) > -1) &&
                     (filterPriorityValue === 'all' || filterPriorityValue === task['Приоритет']);
-            })
-            if (sort === "date"){
-                sortByDate();
-            } else {
-                sortByPriority();
-            }
+            });
+            launchSort(sort, false);
+            changeDisplay('loading', 'none');
             changeOpacity(1);
-            changeDisplay('loading','none');
             outputConstructor();
         });
 }
@@ -153,7 +156,7 @@ function sortTasks(sortParameter, sortMode, extraSortParameter, extraSortMode) {
  * Удаление задачи
  * @param index
  */
-function del_item(index){
+function deleteItem(index){
     if (confirm('Вы уверены?')) {
         for (let j = 0; j < tasks.length; j++) {
             if (tasks[j].id === filteredTasks[index].id) {
@@ -171,7 +174,7 @@ function del_item(index){
  * @param text
  */
 function showText(text) {
-    div.innerHTML = `<h2>${text}</h2>`;
+    div.innerHTML = `<h2 class="output-info">${text}</h2>`;
 }
 
 /**
@@ -225,7 +228,7 @@ function outputConstructor() {
                 </div>
                 <div class="div-with-status-buttons">
                     <button type="button" 
-                    class="status-button"
+                            class="status-button"
                             onclick='taskDiff(${i},1)'
                             id="tick${i}">
                     <img src='tickIcon.png' 
@@ -241,7 +244,7 @@ function outputConstructor() {
                 </div>
             </div>
             <div class="right-side-of-item">
-                <button onclick="del_item(${i})">
+                <button onclick="deleteItem(${i})">
                     <img src="deleteIcon.png" 
                          alt="">
                 </button>
@@ -284,7 +287,7 @@ function saveChangedTask(i) {
     const newValue = document.getElementById(`textNode${i}`).value;
     let priority = document.getElementById(`outputSpanId${i}`).innerText;
     priority = switchCase(0,0,priority);
-    if (searchDuplicate(newValue, priority, i) && newValue.trim() !== ''){
+    if (!searchDuplicate(newValue, priority, i) && newValue.trim() !== '') {
         const changedTask = filteredTasks[i];
         for (let j = 0; j < tasks.length; j++) {
             if (tasks[j].id === changedTask.id) {
@@ -293,13 +296,11 @@ function saveChangedTask(i) {
                     .then();
             }
         }
-        changeOpacity(1);
-        changeDisplay('loading','none');
         filterTasks();
     } else {
         document.getElementById(`textNode${i}`).value = filteredTasks[i]['Название задачи'];
     }
-    if (newValue.trim() === ''){
+    if (!newValue.trim()) {
         alert('Вы не можете оставить название поле пустым')
     }
 }
@@ -316,14 +317,10 @@ function taskDiff(index,difference) {
         if (tasks[j].id === changedTask.id) {
             request('PUT',changedTask, changedTask.id)
                 .then(() => {
-                    changeOpacity(1);
-                    changeDisplay('loading','none');
                     filterTasks();
                 });
         }
     }
-
-
 }
 
 /**
@@ -413,15 +410,15 @@ function switchCase(object, key, value = -1 ) {
  */
 async function request(method, body,id) {
     const origin = "http://127.0.0.1:3000/items";
-    changeDisplay('loading','flex');
+    changeDisplay('loading', 'flex');
     changeOpacity(0.4);
     if (method === "GET") {
-        let resp = await fetch(origin,{
+        let resp = await fetch(origin, {
             method: 'GET'
         });
         tasks = await resp.json();
-    } else if (method === 'POST'){
-        fetch(origin,{
+    } else if (method === 'POST') {
+        fetch(origin, {
             method: 'POST',
             headers: {
                 'accept': 'application/json',
@@ -429,12 +426,12 @@ async function request(method, body,id) {
             },
             body: JSON.stringify(body)
         }).then();
-    } else if (method === 'DELETE'){
-        fetch(origin+`/${id}`,{
+    } else if (method === 'DELETE') {
+        fetch(origin+`/${id}`, {
             method: 'DELETE',
         }).then();
-    } else if (method === 'PUT'){
-        fetch(origin+`/${id}`,{
+    } else if (method === 'PUT') {
+        fetch(origin+`/${id}`, {
             method: 'PUT',
             headers: {
                 'accept': 'application/json',
@@ -451,7 +448,7 @@ async function request(method, body,id) {
  */
 function changeOpacity(targetOpacity) {
     const elements = document.querySelectorAll('.center-of-page');
-    for (let i = 0; i < elements.length; i++){
+    for (let i = 0; i < elements.length; i++) {
         elements[i].style.opacity = `${targetOpacity}`;
     }
 }
@@ -473,5 +470,7 @@ function auto_grow(element) {
  * Функция, запускающая поиск задач спустя полсекунды после начала ввода названия
  */
 function startSearch() {
-    setTimeout(() => filterTasks(),500)
+    setTimeout(() => {
+        filterTasks();
+    },500)
 }

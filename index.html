@@ -30,7 +30,7 @@
     <br>
     <div class="block" id="filters">
         <span>Фильтр по приоритету: </span>
-        <select id="filter-priority" onchange="filterTasks()">
+        <select id="filter-priority" onchange="standardOutput()">
             <option value="all" selected>Любой</option>
             <option value="3">Высокий</option>
             <option value="2">Средний</option>
@@ -38,11 +38,11 @@
         </select>
         <span>Фильтр по статусу: </span>
         <label for="checkbox-rejected">активные</label>
-        <input type="checkbox" id="checkbox-rejected" checked onclick="filterTasks()">
+        <input type="checkbox" id="checkbox-rejected" checked onclick="standardOutput()">
         <label for="checkbox-active">отменённые</label>
-        <input type="checkbox" id="checkbox-active" checked onclick="filterTasks()">
+        <input type="checkbox" id="checkbox-active" checked onclick="standardOutput()">
         <label for="checkbox-done">завершённые</label>
-        <input type="checkbox" id="checkbox-done" checked onclick="filterTasks()">
+        <input type="checkbox" id="checkbox-done" checked onclick="standardOutput()">
         <br>
         <span> Сортировка по дате:</span>
         <select id="sort-date" onblur="launchSort('date')">
