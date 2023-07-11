@@ -71,14 +71,9 @@ function searchDuplicate(taskName, priority, index) {
  * Сортировка по дате
  */
 function sortByDate() {
-
     const sortComboBoxDate = document.getElementById('sort-date');
     const sortComboBoxDateValue = sortComboBoxDate.options[sortComboBoxDate.selectedIndex].value;
-    const sortComboBoxPriority = document.getElementById('sort-priority');
-    const sortComboBoxPriorityValue = sortComboBoxPriority.options[sortComboBoxPriority.selectedIndex].value;
-    let extraSortMode;
-    (sortComboBoxPriorityValue === 'fromHigh') ? extraSortMode = 1 : extraSortMode = -1;
-    (sortComboBoxDateValue === 'fromNew') ? sortTasks('time', -1,'Приоритет',extraSortMode) : sortTasks('time', 1,'Приоритет', extraSortMode);
+    (sortComboBoxDateValue === 'fromNew') ? sortTasks('time', -1) : sortTasks('time', 1);
 }
 
 /**
@@ -87,11 +82,15 @@ function sortByDate() {
 function sortByPriority() {
     const sortComboBoxPriority = document.getElementById('sort-priority');
     const sortComboBoxPriorityValue = sortComboBoxPriority.options[sortComboBoxPriority.selectedIndex].value;
-    const sortComboBoxDate = document.getElementById('sort-date');
-    const sortComboBoxDateValue = sortComboBoxDate.options[sortComboBoxDate.selectedIndex].value;
-    let extraSortMode;
-    (sortComboBoxDateValue === 'fromNew') ? extraSortMode = 1 : extraSortMode = -1;
-    (sortComboBoxPriorityValue === 'fromHigh') ? sortTasks('Приоритет', -1,'time', extraSortMode) : sortTasks('Приоритет', 1,'time', extraSortMode);
+    if (sortComboBoxPriorityValue === 'none') {
+        sortByDate();
+    } else {
+        const sortComboBoxDate = document.getElementById('sort-date');
+        const sortComboBoxDateValue = sortComboBoxDate.options[sortComboBoxDate.selectedIndex].value;
+        let extraSortMode;
+        (sortComboBoxDateValue === 'fromNew') ? extraSortMode = 1 : extraSortMode = -1;
+        (sortComboBoxPriorityValue === 'fromHigh') ? sortTasks('Приоритет', -1, 'time', extraSortMode) : sortTasks('Приоритет', 1, 'time', extraSortMode);
+    }
 }
 
 /**

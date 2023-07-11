@@ -51,8 +51,9 @@
         </select>
 
         <span> Сортировка по приоритету:</span>
-        <select id="sort-priority" onblur="launchSort('priority')">
-            <option value="fromHigh" selected >сначала высокий</option>
+        <select id="sort-priority" onchange="launchSort('priority')">
+            <option value="none" selected >нет</option>
+            <option value="fromHigh">сначала высокий</option>
             <option value="fromLow">сначала низкий</option>
         </select>
         <br>
