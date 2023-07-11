@@ -42,7 +42,6 @@ function addTask() {
         innerObject['Время для вывода'] = outputTime;
         innerObject['Статус'] = status;
         innerObject['time'] = time;
-
         request('POST', innerObject, 0)
             .then(() => {
                 filterTasks();
@@ -118,7 +117,7 @@ function filterTasks() {
             }
             filteredTasks = tasks.filter((task) => {
                 return a.includes(task['Статус']) &&
-                    (textSearch.value.trim === '' || task['Название задачи'].toLowerCase().indexOf(textSearch.value.toLowerCase()) > -1) &&
+                    (!textSearch.value.trim || task['Название задачи'].toLowerCase().indexOf(textSearch.value.toLowerCase()) > -1) &&
                     (filterPriorityValue === 'all' || filterPriorityValue === task['Приоритет']);
             });
             launchSort(sort, false);

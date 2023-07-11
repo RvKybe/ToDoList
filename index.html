@@ -27,7 +27,7 @@
                 <option value="2" selected>Средний</option>
                 <option value="1">Низкий</option>
             </select>
-            <input type="text" id="input-task-name" placeholder="Введите название задачи"> <!--инпут в одну строку?-->
+            <input type="text" id="input-task-name" maxlength="100" placeholder="Введите название задачи"> <!--инпут в одну строку?-->
             <button type="button"
                     onclick="addTask()">
                 Добавить задачу
@@ -45,7 +45,7 @@
             <option value="2">Средний</option>
             <option value="1">Низкий</option>
         </select>
-        <span>Фильтр по статусу: </span>
+        <span style="margin-left: 29px">Фильтр по статусу: </span>
         <label for="checkbox-rejected">активные</label>
         <input type="checkbox" id="checkbox-rejected" checked onclick="filterTasks()">
         <label for="checkbox-active">отменённые</label>
@@ -60,7 +60,7 @@
             <option value="fromOld">сначала старые</option>
         </select>
 
-        <span> Сортировка по приоритету:</span>
+        <span style="margin-left: 5px"> Сортировка по приоритету:</span>
         <select id="sort-priority"
                 onchange="launchSort('priority')">
             <option value="none" selected >нет</option>
@@ -69,7 +69,7 @@
         </select>
         <br>
         <span> Поиск задачи по тексту:</span>
-        <input type="text" id="search-task-name" oninput="startSearch()" placeholder="Начните вводить текст задачи...">
+        <input type="text" id="search-task-name" oninput="startSearch()" maxlength="100" placeholder="Начните вводить текст задачи...">
     </div>
     <br>
     <div id="output"
