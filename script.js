@@ -17,6 +17,7 @@ function launchSort(sortParameter){
  * добавление задачи с проверкой на существующую задачу
  */
 function addTask() {
+
     const taskName = document.getElementById("input-task-name");
     const comboBoxPriority = document.getElementById("priority-add-task");
     const comboBoxPriorityValue = comboBoxPriority.options[comboBoxPriority.selectedIndex].value;
@@ -90,11 +91,11 @@ function sortByPriority() {
  */
 function filterTasks() {
     const textSearch = document.getElementById('search-task-name');
-    const filterPriority = document.getElementById("filterPriority")
+    const filterPriority = document.getElementById("filter-priority")
     const filterPriorityValue = filterPriority.options[filterPriority.selectedIndex].value;
-    const checkActive = document.getElementById('checkboxRejected');
-    const checkRejected = document.getElementById('checkboxActive');
-    const checkDone = document.getElementById('checkboxDone');
+    const checkActive = document.getElementById('checkbox-rejected');
+    const checkRejected = document.getElementById('checkbox-active');
+    const checkDone = document.getElementById('checkbox-done');
 
     request('GET',"0",0)
         .then(() => {
@@ -267,7 +268,7 @@ function changeDisplay(element, targetStatus) {
 /**
  * Чистка полей ввода названия задачи и комбобокса приоритета задачи
  */
-function clearInput(){
+function clearInput() {
     const element = document.getElementById('input-task-name');
     element.value = "";
     const element1 = document.getElementById('priority-add-task');
@@ -308,7 +309,7 @@ function saveChangedTask(i) {
  * @param index
  * @param difference
  */
-function taskDiff(index,difference){
+function taskDiff(index,difference) {
     const changedTask = filteredTasks[index];
     changedTask['Статус'] += +(difference);
     for (let j = 0; j < tasks.length; j++) {
@@ -330,7 +331,7 @@ function taskDiff(index,difference){
  * Сохраняет высоту <div> и назначает её же textarea
  * @param index
  */
-function display_input(index){
+function display_input(index) {
     const elem = document.getElementById(`div_to_change${index}`);
     const height = getComputedStyle(elem).height;
     document.getElementById(`textNode${index}`).style.height = (Number(height.slice(0, -2)) - 6).toString() + "px";
@@ -342,7 +343,7 @@ function display_input(index){
  * Показывает <div> с названием задачи, скрывая <input> изменения названия
  * @param index
  */
-function display_div(index){
+function display_div(index) {
     changeDisplay(`div_to_change${index}`,'block');
     changeDisplay(`textNode${index}`,'none');
 }
@@ -358,7 +359,7 @@ function display_div(index){
  * @param value может быть как индексом в filteredTasks, так и значением приоритета в блоке вывода задачи
  * @returns {string}
  */
-function switchCase(object, key, value = -1 ){
+function switchCase(object, key, value = -1 ) {
     if (typeof(object) === 'object'){
         if (value === -1){
             switch (object[key]){
@@ -410,7 +411,7 @@ function switchCase(object, key, value = -1 ){
  * @param id
  * @returns {Promise<void>}
  */
-async function request(method, body,id){
+async function request(method, body,id) {
     const origin = "http://127.0.0.1:3000/items";
     changeDisplay('loading','flex');
     changeOpacity(0.4);
@@ -448,7 +449,7 @@ async function request(method, body,id){
  * Функция, которая меняет прозрачность страницы
  * @param targetOpacity - нужная прозрачность содержимого страницы
  */
-function changeOpacity(targetOpacity){
+function changeOpacity(targetOpacity) {
     const elements = document.querySelectorAll('.center-of-page');
     for (let i = 0; i < elements.length; i++){
         elements[i].style.opacity = `${targetOpacity}`;
@@ -471,6 +472,6 @@ function auto_grow(element) {
 /**
  * Функция, запускающая поиск задач спустя полсекунды после начала ввода названия
  */
-function startSearch(){
+function startSearch() {
     setTimeout(() => filterTasks(),500)
 }
