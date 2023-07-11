@@ -11,26 +11,35 @@
     <h2>Loading</h2>
 </div>
 
-<div class="center-of-page" id="main">
+<div id="main"
+     class="center-of-page">
     <div class = "top">
-        <div class="title"><h2>Список Ваших дел</h2></div>
+        <div class="title">
+            <h2>Список Ваших дел</h2>
+        </div>
         <div class="block">
             <span>Приоритет:</span>
             <span style="margin-left: 10%;">Текст задачи:</span>
             <br>
-            <select name="prior" id="priority-add-task">
+            <select id="priority-add-task"
+                    name="prior">
                 <option value="3">Высокий</option>
                 <option value="2" selected>Средний</option>
                 <option value="1">Низкий</option>
             </select>
-            <input type="text" id="input-task-name" placeholder="Введите название задачи">
-            <button type="button" onclick="addTask()">Добавить задачу</button>
+            <input type="text" id="input-task-name" placeholder="Введите название задачи"> <!--инпут в одну строку?-->
+            <button type="button"
+                    onclick="addTask()">
+                Добавить задачу
+            </button>
         </div>
     </div>
     <br>
-    <div class="block" id="filters">
+    <div class="block"
+         id="filters">
         <span>Фильтр по приоритету: </span>
-        <select id="filter-priority" onchange="standardOutput()">
+        <select id="filter-priority"
+                onchange="filterTasks()">
             <option value="all" selected>Любой</option>
             <option value="3">Высокий</option>
             <option value="2">Средний</option>
@@ -38,20 +47,22 @@
         </select>
         <span>Фильтр по статусу: </span>
         <label for="checkbox-rejected">активные</label>
-        <input type="checkbox" id="checkbox-rejected" checked onclick="standardOutput()">
+        <input type="checkbox" id="checkbox-rejected" checked onclick="filterTasks()">
         <label for="checkbox-active">отменённые</label>
-        <input type="checkbox" id="checkbox-active" checked onclick="standardOutput()">
+        <input type="checkbox" id="checkbox-active" checked onclick="filterTasks()">
         <label for="checkbox-done">завершённые</label>
-        <input type="checkbox" id="checkbox-done" checked onclick="standardOutput()">
+        <input type="checkbox" id="checkbox-done" checked onclick="filterTasks()">
         <br>
         <span> Сортировка по дате:</span>
-        <select id="sort-date" onblur="launchSort('date')">
+        <select id="sort-date"
+                onchange="launchSort('date')">
             <option value="fromNew" selected>сначала новые</option>
             <option value="fromOld">сначала старые</option>
         </select>
 
         <span> Сортировка по приоритету:</span>
-        <select id="sort-priority" onchange="launchSort('priority')">
+        <select id="sort-priority"
+                onchange="launchSort('priority')">
             <option value="none" selected >нет</option>
             <option value="fromHigh">сначала высокий</option>
             <option value="fromLow">сначала низкий</option>
@@ -61,7 +72,8 @@
         <input type="text" id="search-task-name" oninput="startSearch()" placeholder="Начните вводить текст задачи...">
     </div>
     <br>
-    <div id="output" class="block output-area"></div>
+    <div id="output"
+         class="block output-area"></div>
 </div>
 <script src="script.js"></script>
 </body>

@@ -3,6 +3,7 @@ let filteredTasks = []; // "внешний" массив
 const mainDiv = document.getElementById('main');
 const div = document.getElementById('output');
 let sort = "date";
+let timer;
 outputConstructor();
 
 /**
@@ -124,6 +125,7 @@ function filterTasks() {
             changeDisplay('loading', 'none');
             changeOpacity(1);
             outputConstructor();
+            document.getElementById('search-task-name').disabled = false;
         });
 }
 
@@ -195,28 +197,29 @@ function outputConstructor() {
         const prior = switchCase (task,'Приоритет');
         const color = switchCase (task,'Статус');
         div.innerHTML += `
-        <div id = 'output_div_${i}' class="item-of-output">
+        <div id = 'output_div_${i}' 
+             class="item-of-output">
             <div class="left-side-of-item"> 
-                <span style="color: ${color}" id="outputSpanId${i}">${prior}</span>
+                <span id="outputSpanId${i}" style="color: ${color}">${prior}</span>
             </div>
             <div class="center-of-item" 
                  style="background-color: ${color}; ">
                 <div class="left-side-of-item-mid" 
                      style="background-color: ${color}">
-                    <div class="task-name-of-item" 
-                         id="div_to_change${i}" 
+                    <div id="div_to_change${i}" 
+                         onclick="display_input(${i})"
                          style="background-color: ${color}; font-size: 18px" 
-                         onclick="display_input(${i})">
+                         class="task-name-of-item">
                     </div>
                     <textarea
-                            rows="7"
-                            maxlength="100"
-                            class="task-name-textarea" 
-                            style="background-color: ${color}" 
                             id="textNode${i}" 
                             oninput="auto_grow(this)"
                             onchange="saveChangedTask(${i})" 
-                            onblur="display_div(${i})">
+                            onblur="display_div(${i})"
+                            rows="7"
+                            maxlength="100"
+                            style="background-color: ${color}"
+                            class="task-name-textarea">
                     </textarea>
                     <div class="date-watermark-of-item" 
                          style="background-color: ${color}">
@@ -227,16 +230,16 @@ function outputConstructor() {
                 </div>
                 <div class="div-with-status-buttons">
                     <button type="button" 
-                            class="status-button"
-                            onclick='taskDiff(${i},1)'
-                            id="tick${i}">
+                            id="tick${i}"
+                            onclick='taskDiff(${i}, 1)'
+                            class="status-button">
                     <img src='tickIcon.png' 
                          alt="">
                     </button>
                     <button type="button" 
-                            class="status-button"
-                            onclick='taskDiff(${i},-1)' 
-                            id="cross${i}">
+                            id="cross${i}"
+                            onclick='taskDiff(${i}, -1)'
+                            class="status-button">
                     <img src='crossIcon.png' 
                          alt="">
                     </button>
@@ -469,7 +472,9 @@ function auto_grow(element) {
  * Функция, запускающая поиск задач спустя полсекунды после начала ввода названия
  */
 function startSearch() {
-    setTimeout(() => {
-        filterTasks();
-    },500)
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+        document.getElementById('search-task-name').disabled = true;
+        filterTasks()
+    },1000);
 }

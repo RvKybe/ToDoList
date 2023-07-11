@@ -1,22 +1,22 @@
-body{
+body {
     display: flex;
     justify-content: center;
     line-height: 1.5;
     overflow: hidden;
 }
-.center-of-page{
+.center-of-page {
     display: flex;
     justify-content: center;
     flex-direction: column;
     z-index: 3;
     border: 2px olive solid;
 }
-.block{
+.block {
     background-color: darkgray;
     border-bottom: 1px solid olive;
     border-top: 1px solid olive;
 }
-.output-area{
+.output-area {
     position: relative;
     width: 100%;
     height: 61vh;
@@ -24,21 +24,21 @@ body{
     border-top: 1px solid olive;
     border-bottom: none;
 }
-.item-of-output{
+.item-of-output {
     align-items: center;
     margin-top: 15px;
     width: 100%;
     height: auto;
     display: flex;
 }
-.left-side-of-item{
+.left-side-of-item {
     width: 15%;
     display: flex;
     justify-content: center;
     height: 100%;
     font-size: 20px;
 }
-.center-of-item{
+.center-of-item {
     width: 75%;
     display: flex;
     flex-direction: row;
@@ -46,14 +46,14 @@ body{
     min-height: 50px;
     padding: 3px;
 }
-.right-side-of-item{
+.right-side-of-item {
     width: 10%;
     display: flex;
     justify-content: center;
     height: 100%;
 }
 
-.left-side-of-item-mid{
+.left-side-of-item-mid {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -61,12 +61,12 @@ body{
     width: 100%;
 
 }
-.div-with-status-buttons{
+.div-with-status-buttons {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
 }
-.task-name-of-item{
+.task-name-of-item {
     width: 100%;
     height: 100%;
     min-height: 50px;
@@ -74,19 +74,19 @@ body{
     max-height: 140px;
     font-family: sans-serif;
 }
-.date-watermark-of-item{
+.date-watermark-of-item {
     height: 13px;
     width: 100%;
     font-size: 11px;
 }
-#search-task-name{
+#search-task-name {
     width: 80%;
 }
-#input-task-name{
+#input-task-name {
     margin-left: 10%;
     width: 50%;
 }
-.task-name-textarea{
+.task-name-textarea {
     display:none;
     width: 98%;
     line-height: 1.5;
@@ -96,7 +96,7 @@ body{
     font-family: sans-serif;
     font-size: 18px;
 }
-.title{
+.title {
     display: flex;
     justify-content: space-around;
 }
@@ -115,7 +115,7 @@ h2 {
     50% { background-position: 100% 50%; }
     100% { background-position: 0 50%; }
 }
-#loading{
+#loading {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -126,9 +126,10 @@ h2 {
     justify-content: center;
     align-items: center;
 }
-.status-button{
+.status-button {
     width: 45px;
 }
-.output-info{
+.output-info {
     margin-left: 35%;
+    margin-top: 10%;
 }
