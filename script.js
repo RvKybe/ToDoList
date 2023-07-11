@@ -477,3 +477,9 @@ function startSearch() {
         filterTasks()
     },1000);
 }
+
+function defaultSort(){
+    document.getElementById('sort-priority').value = "none";
+    document.getElementById('sort-date').value = "fromNew";
+    launchSort(sort);
+}

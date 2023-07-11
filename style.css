@@ -12,7 +12,7 @@ body {
     border: 2px olive solid;
 }
 .block {
-    background-color: darkgray;
+    background-color: #b9b9b9;
     border-bottom: 1px solid olive;
     border-top: 1px solid olive;
     padding: 5px;
