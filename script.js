@@ -5,7 +5,8 @@ const mainDiv = document.getElementById('main');
 let sort = "date";
 
 /**
- * Запускает фильтрацию и сортировку задач
+ * Запускает функцию фильтрации и сортировки
+ * @param sortParameter
  */
 function launchSort(sortParameter){
     (sortParameter === "date") ? sort = "date" : sort = "priority";
@@ -85,7 +86,7 @@ function sortByPriority() {
 }
 
 /**
- *Фильтр подходящих задач
+ * Фильтр подходящих задач
  */
 function filterTasks() {
     const textSearch = document.getElementById('searchTaskName');
