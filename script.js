@@ -396,18 +396,22 @@ function switchCase(object, key, value = -1 ) {
                 case 1:
                     changeDisplay(`tick${value}`, 'block');
                     changeDisplay(`cross${value}`, 'none');
+                    document.getElementById(`tick${value}`).dataset.tooltip = "Отметить задачу активной";
                     break;
                 case 2:
                     changeDisplay(`tick${value}`, 'block');
                     changeDisplay(`cross${value}`, 'block');
+                    document.getElementById(`tick${value}`).dataset.tooltip = "Отметить задачу завершенной";
+                    document.getElementById(`cross${value}`).dataset.tooltip = "Отметить задачу отмененной";
                     break;
                 case 3:
                     changeDisplay(`tick${value}`, 'none');
                     changeDisplay(`cross${value}`, 'block');
+                    document.getElementById(`cross${value}`).dataset.tooltip = "Отметить задачу активной";
                     break;
             }
         }
-    } else {
+    } else if (object === 'toNum'){
         switch (value){
             case "низкий":
                 return '1';
@@ -416,6 +420,8 @@ function switchCase(object, key, value = -1 ) {
             case "высокий":
                 return '3';
         }
+    } else if (object === 'changeTooltip'){
+
     }
 }
 
