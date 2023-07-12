@@ -347,6 +347,7 @@ function display_input(index) {
     document.getElementById(`textNode${index}`).style.height = (Number(height.slice(0, -2)) - 6).toString() + "px";
     changeDisplay(`div_to_change${index}`, 'none');
     changeDisplay(`textNode${index}`, 'block');
+    document.getElementById(`textNode${index}`).focus();
 }
 
 /**
