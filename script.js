@@ -15,9 +15,9 @@ filterTasks();
  */
 function launchSort(sortParameter, needToConstruct = true) {
     const sortComboBoxDate = document.getElementById('sort-date');
-    const sortComboBoxDateValue = sortComboBoxDate.options[sortComboBoxDate.selectedIndex].value;
+    const sortComboBoxDateValue = sortComboBoxDate.value;
     const sortComboBoxPriority = document.getElementById('sort-priority');
-    const sortComboBoxPriorityValue = sortComboBoxPriority.options[sortComboBoxPriority.selectedIndex].value;
+    const sortComboBoxPriorityValue = sortComboBoxPriority.value;
 
     sort = (sortParameter === "date") ? "date" : "priority";
     if (sort === "date") {
@@ -42,7 +42,7 @@ function launchSort(sortParameter, needToConstruct = true) {
 function addTask() {
     const taskName = document.getElementById("input-task-name");
     const comboBoxPriority = document.getElementById("priority-add-task");
-    const comboBoxPriorityValue = comboBoxPriority.options[comboBoxPriority.selectedIndex].value;
+    const comboBoxPriorityValue = comboBoxPriority.value;
     if (!taskName.value.trim()) {
         alert('Введите название задачи');
     } else if (!tasks.length || !searchDuplicate(taskName.value, comboBoxPriorityValue, -1)) {
@@ -86,7 +86,7 @@ function searchDuplicate(taskName, priority, index) {
 function filterTasks() {
     const textSearch = document.getElementById('search-task-name');
     const filterPriority = document.getElementById("filter-priority");
-    const filterPriorityValue = filterPriority.options[filterPriority.selectedIndex].value;
+    const filterPriorityValue = filterPriority.value;
     const checkActive = document.getElementById('checkbox-rejected');
     const checkRejected = document.getElementById('checkbox-active');
     const checkDone = document.getElementById('checkbox-done');
