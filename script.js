@@ -161,7 +161,12 @@ function deleteItem(index) {
  * @param text
  */
 function showText(text) {
-    div.innerHTML = `<h2 class="output-info">${text}</h2>`;
+    div.innerHTML = `<div style="display: flex;
+                                 justify-content: center;">
+                         <h2>
+                             ${text}
+                         </h2>
+                     </div>`;
 }
 
 /**
