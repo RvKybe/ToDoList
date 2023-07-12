@@ -195,11 +195,17 @@ function outputConstructor() {
         const task = filteredTasks[i]
         const prior = switchCase (task,'Приоритет');
         const color = switchCase (task,'Статус');
+        let textColor;
+        if (color === "#FFFFFF"){
+            textColor = '#f2db0c';
+        } else {
+            textColor = color;
+        }
         div.innerHTML += `
         <div id = 'output_div_${i}' 
              class="item-of-output">
             <div class="left-side-of-item"> 
-                <span id="outputSpanId${i}" style="color: ${color}">${prior}</span>
+                <span id="outputSpanId${i}" style="color: ${textColor}">${prior}</span>
             </div>
             <div class="center-of-item" 
                  style="background-color: ${color}; ">
