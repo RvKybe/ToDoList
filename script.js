@@ -111,7 +111,6 @@ function filterTasks() {
             changeDisplay('loading', 'none');
             changeOpacity(1);
             outputConstructor();
-            document.getElementById('search-task-name').disabled = false;
         });
 }
 
@@ -490,7 +489,7 @@ function auto_grow(element) {
 function startSearch() {
     clearTimeout(startSearchTaskTimeout);
     startSearchTaskTimeout = setTimeout(() => {
-        document.getElementById('search-task-name').disabled = true;
+        document.getElementById('search-task-name').blur();
         filterTasks()
     },1000);
 }
