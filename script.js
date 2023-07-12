@@ -484,8 +484,16 @@ function startSearch() {
     },1000);
 }
 
+/**
+ * Функция, запускающая стандартную фильтрацию
+ */
 function defaultSort(){
     document.getElementById('sort-priority').value = "none";
     document.getElementById('sort-date').value = "fromNew";
-    launchSort(sort);
+    document.getElementById('search-task-name').value = "";
+    document.getElementById("filter-priority").value = "all";
+    document.getElementById('checkbox-rejected').checked = true;
+    document.getElementById('checkbox-active').checked = true;
+    document.getElementById('checkbox-done').checked = true;
+    filterTasks();
 }
