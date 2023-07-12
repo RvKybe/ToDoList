@@ -8,24 +8,36 @@ let startSearchTaskTimeout;
 outputConstructor();
 
 /**
- * Функция, запускающая фильтрацию и сортировку
- * @param sortParameter
- * @param mode - нужен для отделения сортировки по нажатию кнопки от сортировки при конструировании вывода
+ * Функция, вызывающая функции сортировки в зависимости от основного параметра сортировки
+ * @param sortParameter - основной параметр сортировки
+ * @param needToConstruct - нужен для отделения сортировки по нажатию кнопки от сортировки в filterTasks
+ * Если параметр не задан, то вывод будет построен
  */
-function launchSort(sortParameter , mode = true) {
-    (sortParameter === "date") ? sort = "date" : sort = "priority";
-    if (sort === "date"){
-        sortByDate();
+function launchSort(sortParameter, needToConstruct = true) {
+    const sortComboBoxDate = document.getElementById('sort-date');
+    const sortComboBoxDateValue = sortComboBoxDate.options[sortComboBoxDate.selectedIndex].value;
+    const sortComboBoxPriority = document.getElementById('sort-priority');
+    const sortComboBoxPriorityValue = sortComboBoxPriority.options[sortComboBoxPriority.selectedIndex].value;
+
+    sort = (sortParameter === "date") ? "date" : "priority";
+    if (sort === "date") {
+        (sortComboBoxDateValue === 'fromNew') ? sortTasks('time', -1) : sortTasks('time', 1);
     } else {
-        sortByPriority();
+        if (sortComboBoxPriorityValue === 'none') {
+            sort = "date";
+            launchSort(sort);
+        } else {
+            const extraSortMode = (sortComboBoxDateValue === 'fromNew') ?  1 : -1;
+            (sortComboBoxPriorityValue === 'fromHigh') ? sortTasks('Приоритет', -1, 'time', extraSortMode) : sortTasks('Приоритет', 1, 'time', extraSortMode);
+        }
     }
-    if (mode){
+    if (needToConstruct) {
         outputConstructor();
     }
 }
 
 /**
- * добавление задачи с проверкой на существующую задачу
+ * Добавление задачи с проверкой на уже существующую задачу
  */
 function addTask() {
     const taskName = document.getElementById("input-task-name");
@@ -52,14 +64,14 @@ function addTask() {
 }
 
 /**
- * функция проверки на существование задачи
+ * Функция проверки на существование задачи
  * @param taskName - название задачи
  * @param priority - приоритет задачи
  * @param index - индекс задачи на изменение в filteredTasks
- * @returns {boolean}
+ * @returns {boolean} возвращает true, если дубликат был найден
  */
 function searchDuplicate(taskName, priority, index) {
-    for (let j = 0; j<tasks.length; j++) {
+    for (let j = 0; j < tasks.length; j++) {
         if (tasks[j]['Название задачи'].trim() === taskName.trim() && tasks[j]['Приоритет'] === priority && index !== j) {
             alert('Такая задача уже существует');
             return true;
@@ -69,33 +81,7 @@ function searchDuplicate(taskName, priority, index) {
 }
 
 /**
- * Сортировка по дате
- */
-function sortByDate() {
-    const sortComboBoxDate = document.getElementById('sort-date');
-    const sortComboBoxDateValue = sortComboBoxDate.options[sortComboBoxDate.selectedIndex].value;
-    (sortComboBoxDateValue === 'fromNew') ? sortTasks('time', -1) : sortTasks('time', 1);
-}
-
-/**
- * Сортировка по приоритету
- */
-function sortByPriority() {
-    const sortComboBoxPriority = document.getElementById('sort-priority');
-    const sortComboBoxPriorityValue = sortComboBoxPriority.options[sortComboBoxPriority.selectedIndex].value;
-    if (sortComboBoxPriorityValue === 'none') {
-        sortByDate();
-    } else {
-        const sortComboBoxDate = document.getElementById('sort-date');
-        const sortComboBoxDateValue = sortComboBoxDate.options[sortComboBoxDate.selectedIndex].value;
-        let extraSortMode;
-        (sortComboBoxDateValue === 'fromNew') ? extraSortMode = 1 : extraSortMode = -1;
-        (sortComboBoxPriorityValue === 'fromHigh') ? sortTasks('Приоритет', -1, 'time', extraSortMode) : sortTasks('Приоритет', 1, 'time', extraSortMode);
-    }
-}
-
-/**
- *Фильтр подходящих задач
+ * Фильтр подходящих задач
  */
 function filterTasks() {
     const textSearch = document.getElementById('search-task-name');
@@ -104,7 +90,7 @@ function filterTasks() {
     const checkActive = document.getElementById('checkbox-rejected');
     const checkRejected = document.getElementById('checkbox-active');
     const checkDone = document.getElementById('checkbox-done');
-    request('GET',"0",0)
+    request('GET', "0", 0)
         .then(() => {
             const a = [];
             if (checkRejected.checked) {
@@ -130,7 +116,7 @@ function filterTasks() {
 }
 
 /**
- *
+ * Функция сортировки
  * @param sortParameter - Основной параметр сортировки
  * @param sortMode - Вид сортировки
  * @param extraSortParameter - Дополнительный параметр сортировки
@@ -155,23 +141,23 @@ function sortTasks(sortParameter, sortMode, extraSortParameter, extraSortMode) {
 
 /**
  * Удаление задачи
- * @param index
+ * @param index - номер задачи в filteredTasks
  */
-function deleteItem(index){
+function deleteItem(index) {
     if (confirm('Вы уверены?')) {
         for (let j = 0; j < tasks.length; j++) {
             if (tasks[j].id === filteredTasks[index].id) {
                 request('DELETE', 0, tasks[j].id)
                     .then(() => {
                         filterTasks();
-                    });
+                    }); // Спроси про отступ после обработки промиса
             }
         }
     }
 }
 
 /**
- * Вывод текста, который уведомляет, что массив пуст
+ * Вывод текста, который уведомляет, что tasks или filteredTasks пусты
  * @param text
  */
 function showText(text) {
@@ -193,11 +179,11 @@ function outputConstructor() {
         return;
     }
     for (let i = 0; i < filteredTasks.length; i++) {
-        const task = filteredTasks[i]
+        const task = filteredTasks[i];
         const prior = switchCase (task,'Приоритет');
         const color = switchCase (task,'Статус');
         let textColor;
-        if (color === "#FFFFFF"){
+        if (color === "#FFFFFF") {
             textColor = '#f2db0c';
         } else {
             textColor = color;
@@ -206,7 +192,10 @@ function outputConstructor() {
         <div id = 'output_div_${i}' 
              class="item-of-output">
             <div class="left-side-of-item"> 
-                <span id="outputSpanId${i}" style="color: ${textColor}">${prior}</span>
+                <span id="outputSpanId${i}" 
+                      style="color: ${textColor}">
+                      ${prior}
+                </span>
             </div>
             <div class="center-of-item" 
                  style="background-color: ${color}; ">
@@ -214,7 +203,8 @@ function outputConstructor() {
                      style="background-color: ${color}">
                     <div id="div_to_change${i}" 
                          onclick="display_input(${i})"
-                         style="background-color: ${color}; font-size: 18px" 
+                         style="background-color: ${color}; 
+                                font-size: 18px"
                          class="task-name-of-item">
                     </div>
                     <textarea
@@ -272,7 +262,7 @@ function outputConstructor() {
         const taskName = task['Название задачи'].trim();
         document.getElementById(`textNode${i}`).textContent = taskName;
         document.getElementById(`div_to_change${i}`).innerText = taskName;
-        switchCase(task,'Статус',i);
+        switchCase(task, 'Статус', i);
     }
 }
 
@@ -290,10 +280,10 @@ function changeDisplay(element, targetStatus) {
  * Чистка полей ввода названия задачи и комбобокса приоритета задачи
  */
 function clearInput() {
-    const element = document.getElementById('input-task-name');
-    element.value = "";
-    const element1 = document.getElementById('priority-add-task');
-    element1.value = '2';
+    const inputTaskName = document.getElementById('input-task-name');
+    inputTaskName.value = "";
+    const priorityCombobox = document.getElementById('priority-add-task');
+    priorityCombobox.value = '2';
 }
 
 /**
@@ -304,13 +294,13 @@ function clearInput() {
 function saveChangedTask(i) {
     const newValue = document.getElementById(`textNode${i}`).value;
     let priority = document.getElementById(`outputSpanId${i}`).innerText;
-    priority = switchCase(0,0,priority);
-    if (!searchDuplicate(newValue, priority, i) && newValue.trim() !== '') {
+    priority = switchCase(0, 0, priority);
+    if (!searchDuplicate(newValue, priority, i) && newValue.trim()) {
         const changedTask = filteredTasks[i];
         for (let j = 0; j < tasks.length; j++) {
             if (tasks[j].id === changedTask.id) {
                 changedTask['Название задачи'] = newValue;
-                request('PUT',changedTask, tasks[j].id)
+                request('PUT', changedTask, tasks[j].id)
                     .then();
             }
         }
@@ -325,7 +315,7 @@ function saveChangedTask(i) {
 
 /**
  * Изменяет статус задачи
- * @param index
+ * @param index - номер задачи в filteredTasks
  * @param difference
  */
 function taskDiff(index,difference) {
@@ -350,8 +340,8 @@ function display_input(index) {
     const elem = document.getElementById(`div_to_change${index}`);
     const height = getComputedStyle(elem).height;
     document.getElementById(`textNode${index}`).style.height = (Number(height.slice(0, -2)) - 6).toString() + "px";
-    changeDisplay(`div_to_change${index}`,'none');
-    changeDisplay(`textNode${index}`,'block');
+    changeDisplay(`div_to_change${index}`, 'none');
+    changeDisplay(`textNode${index}`, 'block');
 }
 
 /**
@@ -359,15 +349,15 @@ function display_input(index) {
  * @param index
  */
 function display_div(index) {
-    changeDisplay(`div_to_change${index}`,'block');
-    changeDisplay(`textNode${index}`,'none');
+    changeDisplay(`div_to_change${index}`, 'block');
+    changeDisplay(`textNode${index}`, 'none');
 }
 
 /**
  * блок задачи - конкретная задача в блоке вывода задач
  * Функция,которая:
  * при передаче в object объекта, в value остаётся пустым: возвращает нужную строку приоритета для вывода или возвращает цвет блока
- * при передаче в object объекта, в value передаётся индекс: прячет или показывает кнопки изменения статуса блока задачи
+ * при передаче в object объекта, в value передаётся индекс: прячет или показывает кнопки изменения статуса блока задачи и изменяет надпись подсказки
  * при передаче в object нуля: возвращает возможное значение для объекта с ключом "Статус" по строке приоритета в блоке задачи
  * @param object
  * @param key
@@ -420,19 +410,17 @@ function switchCase(object, key, value = -1 ) {
             case "высокий":
                 return '3';
         }
-    } else if (object === 'changeTooltip'){
-
     }
 }
 
 /**
  *Функция, посылающая запросы
- * @param method
- * @param body
- * @param id
+ * @param method - метод запроса
+ * @param body - тело запроса
+ * @param id - уникальный номер элемента на бэке
  * @returns {Promise<void>}
  */
-async function request(method, body,id) {
+async function request(method, body, id) {
     const origin = "http://127.0.0.1:3000/items";
     changeDisplay('loading', 'flex');
     changeOpacity(0.4);
@@ -478,8 +466,8 @@ function changeOpacity(targetOpacity) {
 }
 
 /**
- * Функция автоматического роста textarea
- * @param element
+ * Функция автоматического роста textarea при вводе enter
+ * @param element - textarea, в которой меняется высота
  */
 function auto_grow(element) {
     element.style.height = '5px';
@@ -491,7 +479,7 @@ function auto_grow(element) {
 }
 
 /**
- * Функция, запускающая поиск задач спустя полсекунды после начала ввода названия
+ * Функция, запускающая поиск задач спустя секунду после начала ввода названия
  */
 function startSearch() {
     clearTimeout(startSearchTaskTimeout);
@@ -516,7 +504,7 @@ function defaultSort() {
 }
 
 /**
- * Функция, которая отрисовывает подсказку
+ * Функция, которая отрисовывает подсказку спустя секунду после наведения на элемент курсора
  * @param event - onmouseenter
  */
 function showTooltip(event) {
@@ -531,7 +519,7 @@ function showTooltip(event) {
             div.style.top = coords.top - div.offsetHeight - 5 + 'px';
             div.style.left = coords.left + (coords.width - div.offsetWidth) / 2 + 'px';
         }
-    }, 1000)
+    }, 1000);
 }
 
 /**
