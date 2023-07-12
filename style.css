@@ -84,7 +84,8 @@ body {
 }
 #input-task-name {
     margin-left: 10%;
-    width: 50%;
+    width: 60%;
+    margin-right: 15px;
 }
 .task-name-textarea {
     display:none;
@@ -133,6 +134,15 @@ h2 {
     margin-left: 38%;
     margin-top: 10%;
 }
-.combobox{
+.combobox {
     height: 21px;
+}
+.tooltip {
+    position: absolute;
+    z-index: 4;
+    background-color: #fff;
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 3px;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, .3);
 }

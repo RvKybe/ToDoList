@@ -3,7 +3,8 @@ let filteredTasks = []; // "внешний" массив
 const mainDiv = document.getElementById('main');
 const div = document.getElementById('output');
 let sort = "date";
-let timer;
+let showTooltipTimeout;
+let startSearchTaskTimeout;
 outputConstructor();
 
 /**
@@ -237,21 +238,31 @@ function outputConstructor() {
                     <button type="button" 
                             id="tick${i}"
                             onclick='taskDiff(${i}, 1)'
-                            class="status-button">
+                            onmouseenter="showTooltip(event)"
+                            onmouseleave="hideTooltip(event)"
+                            data-tooltip="Отметить задачу выполненной"
+                            class="status-button for-tooltip">
                     <img src='tickIcon.png' 
                          alt="">
                     </button>
                     <button type="button" 
                             id="cross${i}"
                             onclick='taskDiff(${i}, -1)'
-                            class="status-button">
+                            onmouseenter="showTooltip(event)"
+                            onmouseleave="hideTooltip(event)"
+                            data-tooltip="Отметить задачу отмененной"
+                            class="status-button for-tooltip">
                     <img src='crossIcon.png' 
                          alt="">
                     </button>
                 </div>
             </div>
             <div class="right-side-of-item">
-                <button onclick="deleteItem(${i})">
+                <button onclick="deleteItem(${i})"
+                        onmouseenter="showTooltip(event)"
+                        onmouseleave="hideTooltip(event)"
+                        data-tooltip="Удалить задачу"
+                        class="for-tooltip">
                     <img src="deleteIcon.png" 
                          alt="">
                 </button>
@@ -477,8 +488,8 @@ function auto_grow(element) {
  * Функция, запускающая поиск задач спустя полсекунды после начала ввода названия
  */
 function startSearch() {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
+    clearTimeout(startSearchTaskTimeout);
+    startSearchTaskTimeout = setTimeout(() => {
         document.getElementById('search-task-name').disabled = true;
         filterTasks()
     },1000);
@@ -487,7 +498,7 @@ function startSearch() {
 /**
  * Функция, запускающая стандартную фильтрацию
  */
-function defaultSort(){
+function defaultSort() {
     document.getElementById('sort-priority').value = "none";
     document.getElementById('sort-date').value = "fromNew";
     document.getElementById('search-task-name').value = "";
@@ -496,4 +507,34 @@ function defaultSort(){
     document.getElementById('checkbox-active').checked = true;
     document.getElementById('checkbox-done').checked = true;
     filterTasks();
+}
+
+/**
+ * Функция, которая отрисовывает подсказку
+ * @param event - onmouseenter
+ */
+function showTooltip(event) {
+     showTooltipTimeout = setTimeout( () => {
+        const target = event.target;
+        const div = document.createElement('div');
+        div.className = "tooltip";
+        document.body.append(div);
+        if (target.dataset.tooltip) {
+            const coords = target.getBoundingClientRect();
+            div.innerHTML = target.dataset.tooltip;
+            div.style.top = coords.top - div.offsetHeight - 5 + 'px';
+            div.style.left = coords.left + (coords.width - div.offsetWidth) / 2 + 'px';
+        }
+    }, 1000)
+}
+
+/**
+ * Функция, которая убирает подсказку
+ * @param event - onmouseleave
+ */
+function hideTooltip(event) {
+    clearTimeout(showTooltipTimeout)
+    for (let item of document.querySelectorAll('.tooltip')) {
+        item.remove();
+    }
 }
