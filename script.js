@@ -5,7 +5,7 @@ const div = document.getElementById('output');
 let sort = "date";
 let showTooltipTimeout;
 let startSearchTaskTimeout;
-outputConstructor();
+filterTasks();
 
 /**
  * Функция, вызывающая функции сортировки в зависимости от основного параметра сортировки
