@@ -3,15 +3,16 @@ body {
     justify-content: center;
     line-height: 1.5;
     overflow: hidden;
+    font-family: Verdana, sans-serif;
 }
 .center-of-page {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     flex-direction: column;
     z-index: 3;
     border: 2px olive solid;
 }
-.block {
+.center-of-the-page__block {
     background-color: #b9b9b9;
     border-bottom: 1px solid olive;
     border-top: 1px solid olive;
@@ -24,21 +25,21 @@ body {
     border-top: 1px solid olive;
     border-bottom: none;
 }
-.item-of-output {
+.output-area__item {
     align-items: center;
     margin-top: 15px;
     width: 100%;
     height: auto;
     display: flex;
 }
-.left-side-of-item {
+.item__task-priority-block {
     width: 15%;
     display: flex;
     justify-content: center;
     height: 100%;
     font-size: 20px;
 }
-.center-of-item {
+.item__main {
     width: 75%;
     display: flex;
     flex-direction: row;
@@ -46,14 +47,14 @@ body {
     min-height: 50px;
     padding: 3px;
 }
-.right-side-of-item {
+.item__delete-button-block {
     width: 10%;
     display: flex;
     justify-content: center;
     height: 100%;
 }
 
-.left-side-of-item-mid {
+.main__task-info-block {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -61,33 +62,34 @@ body {
     width: 100%;
 
 }
-.div-with-status-buttons {
+.main__status-buttons {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
 }
-.task-name-of-item {
+.item__task-name-div {
     width: 100%;
     height: 100%;
     min-height: 50px;
     overflow-y: auto;
     max-height: 140px;
     font-family: sans-serif;
+    font-size: 18px
 }
-.date-watermark-of-item {
+.task__date-of-add {
     height: 13px;
     width: 100%;
     font-size: 11px;
 }
-#search-task-name {
+.filters__search-task-input {
     width: 80%;
 }
-#input-task-name {
+.input-block__input-task-name {
     margin-left: 10%;
     width: 60%;
     margin-right: 15px;
 }
-.task-name-textarea {
+.item__task-name-textarea {
     display:none;
     width: 98%;
     line-height: 1.5;
@@ -116,7 +118,7 @@ h2 {
     50% { background-position: 100% 50%; }
     100% { background-position: 0 50%; }
 }
-#loading {
+.loading {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -141,4 +143,18 @@ h2 {
     border-radius: 4px;
     padding: 3px;
     box-shadow: 3px 3px 3px rgba(0, 0, 0, .3);
+}
+.input-block__text-for-task-input {
+    margin-left: 9%;
+}
+.filters__text-for-status-filter {
+    margin-left: 33px;
+    margin-right: 10px;
+}
+.filters__text-for-sort-by-priority {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+.filters__default-filter {
+    margin-left: 15px;
 }

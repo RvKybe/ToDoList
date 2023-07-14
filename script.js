@@ -160,9 +160,8 @@ function deleteItem(index) {
  * @param text
  */
 function showText(text) {
-    div.innerHTML = `<div style="display: flex;
-                                 justify-content: center;">
-                         <h2>
+    div.innerHTML = `<div class="title">
+                         <h2 class="title__item">
                              ${text}
                          </h2>
                      </div>`;
@@ -194,22 +193,20 @@ function outputConstructor() {
         }
         div.innerHTML += `
         <div id = 'output_div_${i}' 
-             class="item-of-output">
-            <div class="left-side-of-item"> 
+             class="item output-area__item">
+            <div class="item__task-priority-block"> 
                 <span id="outputSpanId${i}" 
-                      style="color: ${textColor}">
+                      style="color: ${textColor}"
+                      class="item__task-priority">
                       ${prior}
                 </span>
             </div>
-            <div class="center-of-item" 
-                 style="background-color: ${color}; ">
-                <div class="left-side-of-item-mid" 
-                     style="background-color: ${color}">
+            <div class="main item__main" 
+                 style="background-color: ${color};">
+                <div class="main__task-info-block">
                     <div id="div_to_change${i}" 
-                         onclick="display_input(${i})"
-                         style="background-color: ${color}; 
-                                font-size: 18px"
-                         class="task-name-of-item">
+                         onclick="display_input(${i})"  
+                         class="item__task-name-div">
                     </div>
                     <textarea
                             id="textNode${i}" 
@@ -218,24 +215,21 @@ function outputConstructor() {
                             onblur="display_div(${i})"
                             rows="7"
                             maxlength="100"
-                            style="background-color: ${color}"
-                            class="task-name-textarea">
+                            style="background-color: ${color};"
+                            class="item__task-name-textarea">
                     </textarea>
-                    <div class="date-watermark-of-item" 
-                         style="background-color: ${color}">
-                        <span>
-                        ${task['Время для вывода']}
-                        </span>
+                    <div class="task__date-of-add" 
+                        <span>${task['Время для вывода']}</span>
                     </div>
                 </div>
-                <div class="div-with-status-buttons">
+                <div class="main__status-buttons">
                     <button type="button" 
                             id="tick${i}"
                             onclick='taskDiff(${i}, 1)'
                             onmouseenter="showTooltip(event)"
                             onmouseleave="hideTooltip(event)"
                             data-tooltip="Отметить задачу выполненной"
-                            class="status-button for-tooltip">
+                            class="status-button">
                     <img src='tickIcon.png' 
                          alt="">
                     </button>
@@ -245,18 +239,18 @@ function outputConstructor() {
                             onmouseenter="showTooltip(event)"
                             onmouseleave="hideTooltip(event)"
                             data-tooltip="Отметить задачу отмененной"
-                            class="status-button for-tooltip">
+                            class="status-button">
                     <img src='crossIcon.png' 
                          alt="">
                     </button>
                 </div>
             </div>
-            <div class="right-side-of-item">
+            <div class="item__delete-button-block">
                 <button onclick="deleteItem(${i})"
                         onmouseenter="showTooltip(event)"
                         onmouseleave="hideTooltip(event)"
                         data-tooltip="Удалить задачу"
-                        class="for-tooltip">
+                        class="item__delete-button">
                     <img src="deleteIcon.png" 
                          alt="">
                 </button>
@@ -291,7 +285,7 @@ function clearInput() {
 }
 
 /**
- * Сохраненяет правок в названии задачи и проверяет, есть ли другая задача с новым названием и тем же приоритето
+ * Сохраняет правки в названии задачи и проверяет, есть ли другая задача с новым названием и тем же приоритето
  * Передаёт изменённую задачу и её индекс
  * @param i - индекс в filteredTasks объекта для изменения
  */
