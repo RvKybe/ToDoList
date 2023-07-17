@@ -204,13 +204,13 @@ function outputConstructor() {
                          class='item__task-name-div'>
                     </div>
                     <textarea id='textNode${i}' 
-                             oninput='expansionTextarea(this)'
-                             onchange='saveChangedTask(${i})' 
-                             onblur='displayDiv(${i})'
-                             rows='7'
-                             maxlength='100'
-                             style='background-color: ${color};'
-                             class='item__task-name-textarea'>
+                              oninput='expansionTextarea(this)'
+                              onchange='saveChangedTask(${i})' 
+                              onblur='displayDiv(${i})'
+                              rows='7'
+                              maxlength='100'
+                              style='background-color: ${color};'
+                              class='item__task-name-textarea'>
                     </textarea>
                     <div class='task__date-of-add' 
                         <span>${task['outputDateTime']}</span>
@@ -502,7 +502,6 @@ function startSearch() {
     const searchTaskInput = document.getElementById('search-task-name');
     const searchTaskTextLength = searchTaskInput.value.length;
     if (searchTaskTextLength  !== 1) {
-            searchTaskInput.blur();
             filterTasks();
     }
 }
