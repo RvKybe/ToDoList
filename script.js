@@ -199,10 +199,9 @@ function outputConstructor() {
             <div class='main item__main' 
                  style='background-color: ${color};'>
                 <div class='main__task-info-block'>
-                    <div id='div_to_change${i}' 
+                    <div id='div-change${i}' 
                          onclick='displayInput(${i})'  
                          class='item__task-name-div'>
-                         ${taskName}
                     </div>
                     <textarea id='textNode${i}' 
                              oninput='expansionTextarea(this)'
@@ -252,7 +251,8 @@ function outputConstructor() {
             </div>
         </div>    
     `;
-        changeStatusButtons(task['status'], i)
+        document.getElementById(`div-change${i}`).innerText = taskName;
+        changeStatusButtons(task['status'], i);
     }
 }
 
@@ -322,10 +322,10 @@ function changeTaskStatus(index, difference) {
  * @param index - id задачи в filteredTasks
  */
 function displayInput(index) {
-    const divHeight = getComputedStyle(document.getElementById(`div_to_change${index}`)).height;
+    const divHeight = getComputedStyle(document.getElementById(`div-change${index}`)).height;
     document.getElementById(`textNode${index}`).style.height = (Number(divHeight.slice(0, -2)) - 6).toString() + 'px';
     document.getElementById(`textNode${index}`).textContent = filteredTasks[index]['name'];
-    changeElementDisplayStyle(`div_to_change${index}`, 'none');
+    changeElementDisplayStyle(`div-change${index}`, 'none');
     changeElementDisplayStyle(`textNode${index}`, 'block');
     document.getElementById(`textNode${index}`).focus();
 }
@@ -335,7 +335,7 @@ function displayInput(index) {
  * @param index - индекс задачи в filteredTasks
  */
 function displayDiv(index) {
-    changeElementDisplayStyle(`div_to_change${index}`, 'block');
+    changeElementDisplayStyle(`div-change${index}`, 'block');
     changeElementDisplayStyle(`textNode${index}`, 'none');
 }
 
