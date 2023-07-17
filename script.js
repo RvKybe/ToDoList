@@ -1,10 +1,10 @@
 let tasks = []; // основной массив
 let filteredTasks = []; // 'внешний' массив
-const mainDiv = document.getElementById('main');
-const div = document.getElementById('output');
+const Page = document.getElementById('main');
+const outputDiv = document.getElementById('output');
 let sort = 'date';
 let showTooltipTimeout;
-requestGet().then( () => filterTasks());
+requestGet().then(() => filterTasks());
 
 /**
  * Функция, вызывающая функции сортировки в зависимости от основного параметра сортировки
@@ -19,7 +19,7 @@ function launchSort(sortParameter, needToConstruct = true) {
     const sortComboBoxPriorityValue = sortComboBoxPriority.value;
 
     sort = sortParameter === 'date' ? 'date' : 'priority';
-    const notSort = sort === 'date' ? 'priority' : 'date';
+    const anotherSort = sort === 'date' ? 'priority' : 'date';
     if (sort === 'date') {
         const sortMode = sortComboBoxDateValue === 'fromNew' ? -1 : 1;
         sortTasks('dateTime', sortMode);
@@ -30,15 +30,15 @@ function launchSort(sortParameter, needToConstruct = true) {
             return;
         } else {
             const sortMode = (sortComboBoxPriorityValue === 'fromHigh') ? -1 : 1;
-            const extraSortMode = (sortComboBoxDateValue === 'fromNew') ? -1 : 1;
-            sortTasks('priority', sortMode, 'dateTime', extraSortMode);
+            const alternativeSortMode = (sortComboBoxDateValue === 'fromNew') ? -1 : 1;
+            sortTasks('priority', sortMode, 'dateTime', alternativeSortMode);
         }
     }
     if (needToConstruct) {
         outputConstructor();
     }
     highlight(sort);
-    removeHighlight(notSort);
+    removeHighlight(anotherSort);
 }
 
 /**
@@ -49,11 +49,11 @@ function addTask() {
     const priorityCombobox = document.getElementById('priority-add-task');
     const comboBoxPriorityValue = priorityCombobox.value;
     const taskName = taskNameInput.value;
-    const midStatusIndex = 2;
+    const mediumStatusIndex = 2;
     if (!taskName.trim()) {
         alert('Введите название задачи');
     } else if (!tasks.length || !searchDuplicate(taskName)) {
-        const status = midStatusIndex;
+        const status = mediumStatusIndex;
         const dateTime = new Date();
         const outputDateTime = dateTime.toLocaleString('ru-RU');
         const newTask = {
@@ -115,17 +115,17 @@ function filterTasks() {
  * Функция сортировки
  * @param sortParameter - Основной параметр сортировки
  * @param sortMode - Вид сортировки
- * @param extraSortParameter - Дополнительный параметр сортировки
- * @param extraSortMode - дополнительный параметр сортировки
+ * @param alternativeSortParameter - Дополнительный параметр сортировки
+ * @param alternativeSortMode - дополнительный параметр сортировки
  */
-function sortTasks(sortParameter, sortMode, extraSortParameter, extraSortMode) {
+function sortTasks(sortParameter, sortMode, alternativeSortParameter, alternativeSortMode) {
     filteredTasks = filteredTasks.sort((a, b) => {
         if (a[sortParameter] === b[sortParameter]) {
-            if (a[extraSortParameter] > b[extraSortParameter]) {
-                return -1 * extraSortMode;
+            if (a[alternativeSortParameter] > b[alternativeSortParameter]) {
+                return -1 * alternativeSortMode;
             }
-            if (a[extraSortParameter] < b[extraSortParameter]) {
-                return extraSortMode;
+            if (a[alternativeSortParameter] < b[alternativeSortParameter]) {
+                return alternativeSortMode;
             }
         } else if (a[sortParameter] < b[sortParameter]) {
             return -1 * sortMode;
@@ -154,19 +154,19 @@ function deleteItem(index) {
  * @param text
  */
 function showText(text) {
-    div.innerHTML = `<div class='title'>
-                         <h2 class='title__item'>
-                             ${text}
-                         </h2>
-                     </div>`;
+    outputDiv.innerHTML = `<div class='title'>
+                               <h2 class='title__item'>
+                                   ${text}
+                               </h2>
+                           </div>`;
 }
 
 /**
  * Конструтор вывода
  */
 function outputConstructor() {
-    div.innerHTML = '';
-    mainDiv.append(div);
+    outputDiv.innerHTML = '';
+    Page.append(outputDiv);
     if (!tasks.length) {
         showText('Лист задач пуст');
         return;
@@ -177,27 +177,27 @@ function outputConstructor() {
     }
     for (let i = 0; i < filteredTasks.length; i++) {
         const task = filteredTasks[i];
-        const prior = getPriorityNameById(task['priority']);
-        const color = getColorByStatusId(task['status']);
+        const priorityName = getPriorityNameById(task['priority']);
+        const backgroundColor = getColorByStatusId(task['status']);
         const taskName = task['name'].trim();
         let textColor;
-        if (color === '#FFFFFF') {
+        if (backgroundColor === '#FFFFFF') {
             textColor = '#f2db0c';
         } else {
-            textColor = color;
+            textColor = backgroundColor;
         }
-        div.innerHTML += `
+        outputDiv.innerHTML += `
         <div id = 'output_div_${i}' 
              class='item output-area__item'>
             <div class='item__task-priority-block'> 
                 <span id='outputSpanId${i}' 
                       style='color: ${textColor}'
                       class='item__task-priority'>
-                      ${prior}
+                      ${priorityName}
                 </span>
             </div>
             <div class='main item__main' 
-                 style='background-color: ${color};'>
+                 style='background-color: ${backgroundColor};'>
                 <div class='main__task-info-block'>
                     <div id='div-change${i}' 
                          onclick='displayInput(${i})'  
@@ -209,7 +209,7 @@ function outputConstructor() {
                               onblur='displayDiv(${i})'
                               rows='7'
                               maxlength='100'
-                              style='background-color: ${color};'
+                              style='background-color: ${backgroundColor};'
                               class='item__task-name-textarea'>
                     </textarea>
                     <div class='task__date-of-add' 
@@ -269,30 +269,30 @@ function changeElementDisplayStyle(elementId, targetStatus) {
  * Чистка полей ввода названия задачи и комбобокса приоритета задачи
  */
 function clearInput() {
-    const midPriorityValue = '2';
+    const mediumPriorityValue = '2';
     const inputTaskName = document.getElementById('input-task-name');
     inputTaskName.value = '';
     const priorityCombobox = document.getElementById('priority-add-task');
-    priorityCombobox.value = midPriorityValue;
+    priorityCombobox.value = mediumPriorityValue;
 }
 
 /**
  * Сохраняет правки в названии задачи и проверяет, есть ли другая задача с новым названием и тем же приоритето
  * Передаёт изменённую задачу и её индекс
- * @param i - индекс в filteredTasks объекта для изменения
+ * @param index - индекс в filteredTasks объекта для изменения
  */
-function saveChangedTask(i) {
-    const changedTask = filteredTasks[i];
-    const newValue = document.getElementById(`textNode${i}`).value;
+function saveChangedTask(index) {
+    const changedTask = filteredTasks[index];
+    const newValue = document.getElementById(`textNode${index}`).value;
     if (!searchDuplicate(newValue) && newValue.trim()) {
         changedTask['name'] = newValue;
         requestPut( changedTask, changedTask.id)
-            .then ( () => {
+            .then (() => {
                 requestGet()
                     .then(() => filterTasks());
             })
     } else {
-        document.getElementById(`textNode${i}`).value = filteredTasks[i]['name'];
+        document.getElementById(`textNode${index}`).value = filteredTasks[index]['name'];
     }
     if (!newValue.trim()) {
         alert('Вы не можете оставить название поле пустым');
@@ -528,14 +528,14 @@ function defaultSort() {
 function showTooltip(event) {
      showTooltipTimeout = setTimeout( () => {
         const target = event.target;
-        const div = document.createElement('div');
-        div.className = 'tooltip';
-        document.body.append(div);
+        const tooltipDiv = document.createElement('div');
+        tooltipDiv.className = 'tooltip';
+        document.body.append(tooltipDiv);
         if (target.dataset.tooltip) {
             const coords = target.getBoundingClientRect();
-            div.innerHTML = target.dataset.tooltip;
-            div.style.top = coords.top - div.offsetHeight - 5 + 'px';
-            div.style.left = coords.left + (coords.width - div.offsetWidth) / 2 + 'px';
+            tooltipDiv.innerHTML = target.dataset.tooltip;
+            tooltipDiv.style.top = coords.top - tooltipDiv.offsetHeight - 5 + 'px';
+            tooltipDiv.style.left = coords.left + (coords.width - tooltipDiv.offsetWidth) / 2 + 'px';
         }
     }, 1000);
 }
@@ -545,8 +545,8 @@ function showTooltip(event) {
  * @param event - onmouseleave
  */
 function hideTooltip(event) {
-    clearTimeout(showTooltipTimeout)
-    document.querySelectorAll('.tooltip').forEach(item => item.remove())
+    clearTimeout(showTooltipTimeout);
+    document.querySelectorAll('.tooltip').forEach(item => item.remove());
 }
 
 /**
