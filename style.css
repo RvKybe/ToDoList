@@ -5,7 +5,7 @@ body {
     overflow: hidden;
     font-family: Verdana, sans-serif;
 }
-.center-of-page {
+.page-center {
     display: flex;
     justify-content: space-around;
     flex-direction: column;
@@ -157,4 +157,12 @@ h2 {
 }
 .filters__default-filter {
     margin-left: 15px;
+}
+.filters__checkboxes {
+    display: inline-block;
+}
+.combobox-highlight {
+    outline: 1px dotted red;
+    border-radius: 2px;
+    outline-offset: 1px;
 }

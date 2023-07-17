@@ -12,7 +12,7 @@
     <h2>Loading</h2>
 </div>
 <div id="main"
-     class="center-of-page">
+     class="page-center">
     <div class="title">
         <h2 class="title__item">
             Список Ваших дел
@@ -57,7 +57,7 @@
         <select id="filter-priority"
                 onchange="filterTasks()"
                 class="combobox filters__priority-filter">
-            <option value="all"
+            <option value="-1"
                     selected
                     class="combobox__item">
                     Любой
@@ -76,41 +76,44 @@
             </option>
         </select>
         <span class="filters__text-for-status-filter">Фильтр по статусу:</span>
-        <label for="checkbox-rejected"
-               class="filters__label-for-checkbox">
-               активные
-        </label>
-        <input type="checkbox"
-               id="checkbox-rejected"
-               data-attr="2"
-               onclick="filterTasks()"
-               checked
-               class="filters__checkbox">
-        <label for="checkbox-active"
-               class="filters__label-for-checkbox">
-               отменённые
-        </label>
-        <input type="checkbox"
-               id="checkbox-active"
-               data-attr="1"
-               onclick="filterTasks()"
-               checked
-               class="filters__checkbox">
-        <label for="checkbox-done"
-               class="filters__label-for-checkbox">
-               завершённые
-        </label>
-        <input type="checkbox"
-               id="checkbox-done"
-               data-attr="3"
-               onclick="filterTasks()"
-               checked
-               class="filters__checkbox">
+        <div id="checkboxesParent"
+             class="filters__checkboxes">
+            <label for="checkbox-active"
+                   class="filters__label-for-checkbox">
+                   активные
+            </label>
+            <input type="checkbox"
+                   id="checkbox-active"
+                   data-attr="2"
+                   onclick="filterTasks()"
+                   checked
+                   class="filters__checkbox">
+            <label for="checkbox-rejected"
+                   class="filters__label-for-checkbox">
+                   отменённые
+            </label>
+            <input type="checkbox"
+                   id="checkbox-rejected"
+                   data-attr="1"
+                   onclick="filterTasks()"
+                   checked
+                   class="filters__checkbox">
+            <label for="checkbox-done"
+                   class="filters__label-for-checkbox">
+                   завершённые
+            </label>
+            <input type="checkbox"
+                   id="checkbox-done"
+                   data-attr="3"
+                   onclick="filterTasks()"
+                   checked
+                   class="filters__checkbox">
+        </div>
         <br>
         <span class="filters__text-for-sort-by-date">Сортировка по дате:</span>
         <select id="sort-date"
                 onchange="launchSort('date')"
-                class="combobox filters__sort-by-date">
+                class="combobox filters__sort-by-date combobox-highlight">
             <option value="fromNew"
                     selected
                     class="combobox__item">
