@@ -16,8 +16,12 @@ const HEADERS = {
     'accept': 'application/json',
     'Content-Type': 'application/json'
 };
+const LOW_PRIORITY_ID = 1;
 const MEDIUM_PRIORITY_ID = 2;
+const HIGH_PRIORITY_ID = 3;
+const REJECTED_STATUS_ID = 1;
 const ACTIVE_STATUS_ID = 2;
+const DONE_STATUS_ID = 3;
 sendGetRequest().then(() => {
     filterTasks();
 });
@@ -404,9 +408,9 @@ function changeStatusButtonsDisplay(statusId, index) {
  */
 function getPriorityNameById(priorityId) {
     const priorityDictionary = {
-        1: 'низкий',
-        2: 'средний',
-        3: 'высокий'
+        [LOW_PRIORITY_ID]: 'низкий',
+        [MEDIUM_PRIORITY_ID]: 'средний',
+        [HIGH_PRIORITY_ID]: 'высокий'
     };
     return priorityDictionary[priorityId];
 }
@@ -418,9 +422,9 @@ function getPriorityNameById(priorityId) {
  */
 function getStatusColorById(statusId) {
     const colorDictionary = {
-        1: '#ff6161',
-        2: '#FFFFFF',
-        3: '#80ff80'
+        [REJECTED_STATUS_ID]: '#ff6161',
+        [ACTIVE_STATUS_ID]: '#FFFFFF',
+        [DONE_STATUS_ID]: '#80ff80'
     };
     return colorDictionary[statusId];
 }
