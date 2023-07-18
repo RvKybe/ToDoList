@@ -35,12 +35,10 @@ async function addTask() {
     if (!taskName.trim()) {
         alert('Введите название задачи');
     } else if (!tasks.length || !searchDuplicate(taskName)) {
-        const dateTime = new Date();
-        const outputDateTime = dateTime.toLocaleString('ru-RU');
+        const dateTime = new Date().toLocaleString('ru-RU');
         const newTask = {
             priorityId: priorityComboBoxValue,
             name: taskName,
-            outputDateTime,
             statusId: ACTIVE_STATUS_ID,
             dateTime,
         };
@@ -192,7 +190,7 @@ function outputConstructor() {
                               class="item__task-name-textarea">
                     </textarea>
                     <div class="task__date-of-add" 
-                        <span>${task.outputDateTime}</span>
+                        <span>${task.dateTime}</span>
                     </div>
                 </div>
                 <div class="main__status-buttons">
