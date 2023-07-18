@@ -179,7 +179,7 @@ function outputConstructor() {
                          class="item__task-name-div">
                     </div>
                     <textarea id="textNode${i}" 
-                              oninput="expansionTextarea(this)"
+                              oninput="extendTextarea(this)"
                               onchange="saveChangedTask(${i})" 
                               onblur="displayDiv(${i})"
                               rows="7"
@@ -491,7 +491,7 @@ function changePageOpacity(targetOpacity) {
  * Функция автоматического роста textarea при вводе enter
  * @param element - textarea, в которой меняется высота
  */
-function expansionTextarea(element) {
+function extendTextarea(element) {
     element.style.height = '5px';
     if (element.scrollHeight <= 150) {
         element.style.height = element.scrollHeight + 'px';
