@@ -1,9 +1,9 @@
 let tasks = []; // основной массив
-let filteredTasks = []; // 'внешний' массив
+let filteredTasks = []; // массив, откуда забираются задачи для вывода
+let sort = 'date'; // способо сортировки. По умолчанию стоит по дате
+let showTooltipTimeout; // таймер показа подсказки
 const mainContainer = document.getElementById('main');
 const outputContainer = document.getElementById('output');
-let sort = 'date';
-let showTooltipTimeout;
 const HOST = 'http://127.0.0.1:3000/items';
 const HEADERS = {
     'accept': 'application/json',
@@ -174,7 +174,7 @@ function outputConstructor() {
             <div class='main item__main' 
                  style='background-color: ${backgroundColor};'>
                 <div class='main__task-info-block'>
-                    <div id='div-change${i}' 
+                    <div id='task-name-div${i}' 
                          onclick='displayInput(${i})'  
                          class='item__task-name-div'>
                     </div>
@@ -193,7 +193,7 @@ function outputConstructor() {
                 </div>
                 <div class='main__status-buttons'>
                     <button type='button' 
-                            id='statusUpButton${i}'
+                            id='status-up-button${i}'
                             onclick='changeTaskStatus(${i}, 1)'
                             onmouseenter='showTooltip(event)'
                             onmouseleave='hideTooltip(event)'
@@ -203,7 +203,7 @@ function outputConstructor() {
                          alt=''>
                     </button>
                     <button type='button' 
-                            id='statusDownButton${i}'
+                            id='status-down-button${i}'
                             onclick='changeTaskStatus(${i}, -1)'
                             onmouseenter='showTooltip(event)'
                             onmouseleave='hideTooltip(event)'
@@ -226,7 +226,7 @@ function outputConstructor() {
             </div>
         </div>    
     `;
-        document.getElementById(`div-change${i}`).innerText = taskName;
+        document.getElementById(`task-name-div${i}`).innerText = taskName;
         changeStatusButtonsDisplay(task.statusId, i);
     }
 }
@@ -315,7 +315,7 @@ async function saveChangedTask(index) {
         await sendGetRequest();
         filterTasks();
     } else {
-        newNameValue = filteredTasks[index].name;
+        newNameValue = changedTask.name;
     }
     if (!newNameValue.trim()) {
         alert('Вы не можете оставить название поле пустым');
@@ -341,10 +341,10 @@ async function changeTaskStatus(index, difference) {
  * @param index - индекс задачи в filteredTasks
  */
 function displayInput(index) {
-    const divHeight = getComputedStyle(document.getElementById(`div-change${index}`)).height;
+    const divHeight = getComputedStyle(document.getElementById(`task-name-div${index}`)).height;
     document.getElementById(`textNode${index}`).style.height = (Number(divHeight.slice(0, -2)) - 6).toString() + 'px';
     document.getElementById(`textNode${index}`).textContent = filteredTasks[index].name;
-    changeElementDisplay(`div-change${index}`, 'none');
+    changeElementDisplay(`task-name-div${index}`, 'none');
     changeElementDisplay(`textNode${index}`, 'block');
     document.getElementById(`textNode${index}`).focus();
 }
@@ -354,7 +354,7 @@ function displayInput(index) {
  * @param index - индекс задачи в filteredTasks
  */
 function displayDiv(index) {
-    changeElementDisplay(`div-change${index}`, 'block');
+    changeElementDisplay(`task-name-div${index}`, 'block');
     changeElementDisplay(`textNode${index}`, 'none');
 }
 
@@ -366,11 +366,11 @@ function displayDiv(index) {
 function changeStatusButtonsDisplay(statusId, index) {
     let statusUpButtonTargetDisplay = '';
     let statusUpButtonTooltip = '';
-    const statusUpButtonId = `statusUpButton${index}`;
+    const statusUpButtonId = `status-up-button${index}`;
     let statusDownButtonTargetDisplay = '';
     let statusDownButtonTooltip = '';
-    const statusDownButtonId = `statusDownButton${index}`;
-    switch (statusId) {
+    const statusDownButtonId = `status-down-button${index}`;
+    switch(statusId) {
         case 1:
             statusUpButtonTargetDisplay = 'block';
             statusUpButtonTooltip = 'Отметить задачу активной';
@@ -529,7 +529,7 @@ function defaultSort() {
  * @param event - onmouseenter
  */
 function showTooltip(event) {
-     showTooltipTimeout = setTimeout( () => {
+     showTooltipTimeout = setTimeout(() => {
         const target = event.target;
         const tooltipDiv = document.createElement('div');
         tooltipDiv.className = 'tooltip';
