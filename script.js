@@ -245,7 +245,7 @@ function switchPreloaderDisplay(visible) {
 }
 
 /**
- * Функция проверки на существование задачи
+ * Функция, которая проверяет задачу на существование
  * @param taskName - название задачи
  * @returns {boolean} возвращает true, если дубликат был найден
  */
@@ -260,7 +260,7 @@ function searchDuplicate(taskName) {
 }
 
 /**
- * Удаляет задачу
+ * Функция, которая удаляет задачу
  * @param index - порядковый номер задачи в filteredTasks
  */
 async function deleteItem(index) {
@@ -272,7 +272,7 @@ async function deleteItem(index) {
 }
 
 /**
- * Вывод текста, который уведомляет, что tasks или filteredTasks пусты
+ * Функция вывода текста, который уведомляет, что tasks или filteredTasks пусты
  * @param text - текст-затычка для outputContainer при пустых массивах
  */
 function showText(text) {
@@ -284,7 +284,7 @@ function showText(text) {
 }
 
 /**
- * Смена режима отображения элемента
+ * Функция смены режима отображения элемента
  * @param elementId - id элемента
  * @param targetStatus - нужный статус
  */
@@ -293,7 +293,7 @@ function changeElementDisplay(elementId, targetStatus) {
 }
 
 /**
- * Чистка полей ввода названия задачи и комбобокса приоритета задачи
+ * Функция чистки полей ввода названия задачи и комбобокса приоритета задачи
  */
 function clearInput() {
     const inputTaskName = document.getElementById('input-task-name');
