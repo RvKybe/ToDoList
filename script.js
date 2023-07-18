@@ -89,7 +89,7 @@ function launchSort(sortParameter, needToConstruct = true) {
         } else {
             const sortMode = sortByPriorityComboBoxValue === 'fromHigh' ? -1 : 1;
             const alternativeSortMode = sortByDateComboboxValue === 'fromNew' ? -1 : 1;
-            sortTasks('priority', sortMode, 'dateTime', alternativeSortMode);
+            sortTasks('priorityId', sortMode, 'dateTime', alternativeSortMode);
         }
     }
     if (needToConstruct) {
@@ -109,10 +109,10 @@ function sortTasks(sortParameter, sortMode, alternativeSortParameter, alternativ
     filteredTasks = filteredTasks.sort((a, b) => {
         if (a[sortParameter] === b[sortParameter]) {
             if (a[alternativeSortParameter] > b[alternativeSortParameter]) {
-                return -1 * alternativeSortMode;
+                return alternativeSortMode;
             }
             if (a[alternativeSortParameter] < b[alternativeSortParameter]) {
-                return alternativeSortMode;
+                return -1 * alternativeSortMode;
             }
         } else if (a[sortParameter] < b[sortParameter]) {
             return -1 * sortMode;
