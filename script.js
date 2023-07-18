@@ -378,18 +378,18 @@ function changeStatusButtonsDisplay(statusId, index) {
     let statusDownButtonTargetDisplay = '';
     let statusDownButtonTooltip = '';
     switch(statusId) {
-        case 1:
+        case REJECTED_STATUS_ID:
             statusUpButtonTargetDisplay = 'block';
             statusUpButtonTooltip = 'Отметить задачу активной';
             statusDownButtonTargetDisplay = 'none';
             break;
-        case 2:
+        case ACTIVE_STATUS_ID:
             statusUpButtonTargetDisplay = 'block';
             statusUpButtonTooltip = 'Отметить задачу решенной';
             statusDownButtonTargetDisplay = 'block';
             statusDownButtonTooltip = 'Отметить задачу отменной';
             break;
-        case 3:
+        case DONE_STATUS_ID:
             statusUpButtonTargetDisplay = 'none';
             statusDownButtonTargetDisplay = 'block';
             statusDownButtonTooltip = 'Отметить задачу активной';
