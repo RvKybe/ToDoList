@@ -14,7 +14,6 @@ sendGetRequest().then(() => {
     filterTasks();
 });
 
-
 /**
  * Добавление задачи
  */
@@ -62,7 +61,7 @@ function filterTasks() {
     });
     launchSort(null, false);
     outputConstructor();
-    switchPreloaderDisplay();
+    switchPreloaderDisplay('off');
 }
 
 /**
@@ -235,9 +234,8 @@ function outputConstructor() {
 /**
  * Функция переключения режима отображения прелоадера
  */
-function switchPreloaderDisplay() {
-    const loaderVisibility = document.getElementById('loading').style.display;
-    if (loaderVisibility === 'none' || loaderVisibility === '') { // костыль, иначе не работает
+function switchPreloaderDisplay(mode) {
+    if (mode === 'on') {
         changeElementDisplay('loading', 'flex');
         changePageOpacity(0.4);
     } else {
@@ -429,7 +427,7 @@ function getStatusColorById(statusId) {
  * @returns {Promise<void>}
  */
 async function sendGetRequest() {
-    switchPreloaderDisplay();
+    switchPreloaderDisplay('on');
     const response = await fetch(`${HOST}`, {
         method: 'GET'
     });
@@ -442,7 +440,7 @@ async function sendGetRequest() {
  * @returns {Promise<void>}
  */
 async function sendPostRequest(body) {
-    switchPreloaderDisplay();
+    switchPreloaderDisplay('on');
     body = JSON.stringify(body);
     await fetch(`${HOST}`, {
         method: 'POST',
@@ -457,7 +455,7 @@ async function sendPostRequest(body) {
  * @returns {Promise<void>}
  */
 async function sendDeleteRequest(id) {
-    switchPreloaderDisplay();
+    switchPreloaderDisplay('on');
     await fetch(`${HOST}/${id}`, {
         method: 'DELETE'
     });
@@ -470,7 +468,7 @@ async function sendDeleteRequest(id) {
  * @returns {Promise<void>}
  */
 async function sendPutRequest(body, id) {
-    switchPreloaderDisplay();
+    switchPreloaderDisplay('on');
     body = JSON.stringify(body);
     await fetch(`${HOST}/${id}`, {
         method: 'PUT',
