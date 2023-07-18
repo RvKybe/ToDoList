@@ -10,6 +10,7 @@ const HEADERS = {
     'Content-Type': 'application/json'
 };
 const MEDIUM_PRIORITY_ID = 2;
+const ACTIVE_STATUS_ID = 2;
 sendGetRequest().then(() => {
     filterTasks();
 });
@@ -25,14 +26,13 @@ async function addTask() {
     if (!taskName.trim()) {
         alert('Введите название задачи');
     } else if (!tasks.length || !searchDuplicate(taskName)) {
-        const status = MEDIUM_PRIORITY_ID;
         const dateTime = new Date();
         const outputDateTime = dateTime.toLocaleString('ru-RU');
         const newTask = {
             priorityId: priorityComboBoxValue,
             name: taskName,
             outputDateTime,
-            statusId: status,
+            statusId: ACTIVE_STATUS_ID,
             dateTime,
         };
         await sendPostRequest(newTask);
@@ -61,7 +61,7 @@ function filterTasks() {
     });
     launchSort(null, false);
     outputConstructor();
-    switchPreloaderDisplay('off');
+    switchPreloaderDisplay(false);
 }
 
 /**
@@ -163,65 +163,65 @@ function outputConstructor() {
             textColor = backgroundColor;
         }
         outputContainer.innerHTML += `
-        <div id = 'output-div-${i}' 
-             class='item output-area__item'>
-            <div class='item__task-priority-block'> 
-                <span style='color: ${textColor}'
-                      class='item__task-priority'>
+        <div id="output-div-${i}" 
+             class="item output-area__item">
+            <div class="item__task-priority-block"> 
+                <span style="color: ${textColor}"
+                      class="item__task-priority">
                       ${priorityName}
                 </span>
             </div>
-            <div class='main item__main' 
-                 style='background-color: ${backgroundColor};'>
-                <div class='main__task-info-block'>
-                    <div id='task-name-div${i}' 
-                         onclick='displayInput(${i})'  
-                         class='item__task-name-div'>
+            <div class="main item__main" 
+                 style="background-color: ${backgroundColor};">
+                <div class="main__task-info-block">
+                    <div id="task-name-div${i}" 
+                         onclick="displayInput(${i})"  
+                         class="item__task-name-div">
                     </div>
-                    <textarea id='textNode${i}' 
-                              oninput='expansionTextarea(this)'
-                              onchange='saveChangedTask(${i})' 
-                              onblur='displayDiv(${i})'
-                              rows='7'
-                              maxlength='100'
-                              style='background-color: ${backgroundColor};'
-                              class='item__task-name-textarea'>
+                    <textarea id="textNode${i}" 
+                              oninput="expansionTextarea(this)"
+                              onchange="saveChangedTask(${i})" 
+                              onblur="displayDiv(${i})"
+                              rows="7"
+                              maxlength="100"
+                              style="background-color: ${backgroundColor};"
+                              class="item__task-name-textarea">
                     </textarea>
-                    <div class='task__date-of-add' 
+                    <div class="task__date-of-add" 
                         <span>${task.outputDateTime}</span>
                     </div>
                 </div>
-                <div class='main__status-buttons'>
-                    <button type='button' 
-                            id='status-up-button${i}'
-                            onclick='changeTaskStatus(${i}, 1)'
-                            onmouseenter='showTooltip(event)'
-                            onmouseleave='hideTooltip(event)'
-                            data-tooltip='Отметить задачу выполненной'
-                            class='status-button'>
-                    <img src='tick-icon.png' 
-                         alt=''>
+                <div class="main__status-buttons">
+                    <button type="button" 
+                            id="status-up-button${i}"
+                            onclick="changeTaskStatus(${i}, 1)"
+                            onmouseenter="showTooltip(event)"
+                            onmouseleave="hideTooltip(event)"
+                            data-tooltip="Отметить задачу выполненной"
+                            class="status-button">
+                    <img src="tick-icon.png" 
+                         alt="">
                     </button>
-                    <button type='button' 
-                            id='status-down-button${i}'
-                            onclick='changeTaskStatus(${i}, -1)'
-                            onmouseenter='showTooltip(event)'
-                            onmouseleave='hideTooltip(event)'
-                            data-tooltip='Отметить задачу отмененной'
-                            class='status-button'>
-                    <img src='cross-icon.png' 
-                         alt=''>
+                    <button type="button" 
+                            id="status-down-button${i}"
+                            onclick="changeTaskStatus(${i}, -1)"
+                            onmouseenter="showTooltip(event)"
+                            onmouseleave="hideTooltip(event)"
+                            data-tooltip="Отметить задачу отмененной"
+                            class="status-button">
+                    <img src="cross-icon.png" 
+                         alt="">
                     </button>
                 </div>
             </div>
-            <div class='item__delete-button-block'>
-                <button onclick='deleteItem(${i})'
-                        onmouseenter='showTooltip(event)'
-                        onmouseleave='hideTooltip(event)'
-                        data-tooltip='Удалить задачу'
-                        class='item__delete-button'>
-                    <img src='delete-icon.png' 
-                         alt=''>
+            <div class="item__delete-button-block">
+                <button onclick="deleteItem(${i})"
+                        onmouseenter="showTooltip(event)"
+                        onmouseleave="hideTooltip(event)"
+                        data-tooltip="Удалить задачу"
+                        class="item__delete-button">
+                    <img src="delete-icon.png" 
+                         alt="">
                 </button>
             </div>
         </div>    
@@ -232,10 +232,11 @@ function outputConstructor() {
 }
 
 /**
- * Функция переключения режима отображения прелоадера
+ * Функция переключения режима отображения прелоадер
+ * @param visible - целевое состояние видимости прелоадера
  */
-function switchPreloaderDisplay(mode) {
-    if (mode === 'on') {
+function switchPreloaderDisplay(visible) {
+    if (visible) {
         changeElementDisplay('loading', 'flex');
         changePageOpacity(0.4);
     } else {
@@ -427,7 +428,7 @@ function getStatusColorById(statusId) {
  * @returns {Promise<void>}
  */
 async function sendGetRequest() {
-    switchPreloaderDisplay('on');
+    switchPreloaderDisplay(true);
     const response = await fetch(`${HOST}`, {
         method: 'GET'
     });
@@ -440,7 +441,7 @@ async function sendGetRequest() {
  * @returns {Promise<void>}
  */
 async function sendPostRequest(body) {
-    switchPreloaderDisplay('on');
+    switchPreloaderDisplay(true);
     body = JSON.stringify(body);
     await fetch(`${HOST}`, {
         method: 'POST',
@@ -455,7 +456,7 @@ async function sendPostRequest(body) {
  * @returns {Promise<void>}
  */
 async function sendDeleteRequest(id) {
-    switchPreloaderDisplay('on');
+    switchPreloaderDisplay(true);
     await fetch(`${HOST}/${id}`, {
         method: 'DELETE'
     });
@@ -468,7 +469,7 @@ async function sendDeleteRequest(id) {
  * @returns {Promise<void>}
  */
 async function sendPutRequest(body, id) {
-    switchPreloaderDisplay('on');
+    switchPreloaderDisplay(true);
     body = JSON.stringify(body);
     await fetch(`${HOST}/${id}`, {
         method: 'PUT',
