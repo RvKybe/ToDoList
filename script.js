@@ -11,6 +11,13 @@ const HEADERS = {
 };
 const MEDIUM_PRIORITY_ID = 2;
 const ACTIVE_STATUS_ID = 2;
+const taskNameInput = document.getElementById('input-task-name');
+const priorityCombobox = document.getElementById('priority-add-task');
+const taskSearchInput = document.getElementById('search-task-name');
+const filterPriorityCombobox = document.getElementById('filter-priority');
+const checkboxes = Array.from(document.getElementById('checkboxesParent').children);
+const sortByDateCombobox = document.getElementById('sort-date');
+const sortByPriorityCombobox = document.getElementById('sort-priority');
 sendGetRequest().then(() => {
     filterTasks();
 });
@@ -19,8 +26,6 @@ sendGetRequest().then(() => {
  * Функция, которая добавляет задачу
  */
 async function addTask() {
-    const taskNameInput = document.getElementById('input-task-name');
-    const priorityCombobox = document.getElementById('priority-add-task');
     const priorityComboBoxValue = priorityCombobox.value;
     const taskName = taskNameInput.value;
     if (!taskName.trim()) {
@@ -46,18 +51,15 @@ async function addTask() {
  * Функция фильтрации подходящих задач
  */
 function filterTasks() {
-    const taskSearchInput = document.getElementById('search-task-name');
     const taskSearchValue = taskSearchInput.value;
-    const filterPriority = document.getElementById('filter-priority');
-    const filterPriorityValue = filterPriority.value;
-    const checkBoxElements = Array.from(document.getElementById('checkboxesParent').children);
-    const selectedStatusIds = checkBoxElements
+    const filterPriorityComboboxValue = filterPriorityCombobox.value;
+    const selectedStatusIds = checkboxes
         .filter(checkBox => checkBox.checked)
         .map(checkBox => Number(checkBox.dataset.attr));
     filteredTasks = tasks.filter((task) => {
         return selectedStatusIds.includes(task.statusId) &&
             (!taskSearchValue.trim() || task.name.toLowerCase().indexOf(taskSearchValue.toLowerCase()) > -1) &&
-            (Number(filterPriorityValue) === -1 || filterPriorityValue === task.priority);
+            (Number(filterPriorityComboboxValue) === -1 || filterPriorityComboboxValue === task.priority);
     });
     launchSort(null, false);
     outputConstructor();
@@ -70,9 +72,7 @@ function filterTasks() {
  * @param needToConstruct - нужен для отделения сортировки по нажатию кнопки от сортировки в filterTasks
  */
 function launchSort(sortParameter, needToConstruct = true) {
-    const sortByDateCombobox = document.getElementById('sort-date');
     const sortByDateComboboxValue = sortByDateCombobox.value;
-    const sortByPriorityCombobox = document.getElementById('sort-priority');
     const sortByPriorityComboBoxValue = sortByPriorityCombobox.value;
     if (sortParameter) {
         sort = sortParameter;
@@ -125,8 +125,8 @@ function sortTasks(sortParameter, sortMode, alternativeSortParameter, alternativ
  * Функция выделения комбобокса сортировки
  */
 function switchComboboxHighlight() {
-    const sortByDateComboboxClassList = document.getElementById('sort-date').classList;
-    const sortByPriorityComboboxClassList = document.getElementById('sort-priority').classList;
+    const sortByDateComboboxClassList = sortByDateCombobox.classList;
+    const sortByPriorityComboboxClassList = sortByPriorityCombobox.classList;
     if (sort === 'date') {
         sortByDateComboboxClassList.add('combobox-highlight');
         sortByPriorityComboboxClassList.remove('combobox-highlight');
@@ -137,7 +137,7 @@ function switchComboboxHighlight() {
 }
 
 /**
- * Функция-конструтор вывода
+ * Функция-конструктор вывода
  */
 function outputConstructor() {
     outputContainer.innerHTML = '';
@@ -265,7 +265,7 @@ function searchDuplicate(taskName) {
  */
 async function deleteItem(index) {
     if (confirm('Вы уверены?')) {
-        await sendDeleteRequest( filteredTasks[index].id);
+        await sendDeleteRequest(filteredTasks[index].id);
         await sendGetRequest();
         filterTasks();
     }
@@ -296,9 +296,7 @@ function changeElementDisplay(elementId, targetStatus) {
  * Функция чистки полей ввода названия задачи и комбобокса приоритета задачи
  */
 function clearInput() {
-    const inputTaskName = document.getElementById('input-task-name');
-    inputTaskName.value = '';
-    const priorityCombobox = document.getElementById('priority-add-task');
+    taskNameInput.value = '';
     priorityCombobox.value = MEDIUM_PRIORITY_ID;
 }
 
@@ -336,21 +334,23 @@ async function changeTaskStatus(index, difference) {
 }
 
 /**
- * Показывает <textarea> изменения названия после щелчка по <div>, скрывая <div> с названием задачи
- * Сохраняет высоту <div> и назначает её же textarea
+ * Показывает элемент изменения названия после щелчка по блоку вывода названия задачи
+ * Скрывает блок с названием задачи
+ * Сохраняет высоту блок названия задачи и назначает её же элементу изменения названия задачи
  * @param index - порядковый номер задачи в filteredTasks
  */
 function displayInput(index) {
+    const textNode = document.getElementById(`textNode${index}`);
     const divHeight = getComputedStyle(document.getElementById(`task-name-div${index}`)).height;
-    document.getElementById(`textNode${index}`).style.height = (Number(divHeight.slice(0, -2)) - 6).toString() + 'px';
-    document.getElementById(`textNode${index}`).textContent = filteredTasks[index].name;
+    textNode.style.height = (Number(divHeight.slice(0, -2)) - 6).toString() + 'px';
+    textNode.textContent = filteredTasks[index].name;
     changeElementDisplay(`task-name-div${index}`, 'none');
     changeElementDisplay(`textNode${index}`, 'block');
-    document.getElementById(`textNode${index}`).focus();
+    textNode.focus();
 }
 
 /**
- * Показывает <div> с названием задачи, скрывая <textarea> изменения названия
+ * Показывает блок вывода с названием задачи, скрывая элемента изменения названия задачи
  * @param index - порядковый номер задачи в filteredTasks
  */
 function displayDiv(index) {
@@ -503,8 +503,7 @@ function extendTextarea(element) {
  * Функция поиска задачи
  */
 function startSearch() {
-    const searchTaskInput = document.getElementById('search-task-name');
-    const searchTaskTextLength = searchTaskInput.value.length;
+    const searchTaskTextLength = taskSearchInput.value.length;
     if (searchTaskTextLength > 1) {
             filterTasks();
     }
@@ -514,13 +513,11 @@ function startSearch() {
  * Функция, запускающая стандартную фильтрацию
  */
 function defaultSort() {
-    document.getElementById('sort-priority').value = 'none';
-    document.getElementById('sort-date').value = 'fromNew';
-    document.getElementById('search-task-name').value = '';
-    document.getElementById('filter-priority').value = '-1';
-    document.getElementById('checkbox-rejected').checked = true;
-    document.getElementById('checkbox-active').checked = true;
-    document.getElementById('checkbox-done').checked = true;
+    sortByPriorityCombobox.value = 'none';
+    sortByDateCombobox.value = 'fromNew';
+    taskSearchInput.value = '';
+    filterPriorityCombobox.value = '-1';
+    checkboxes.map(checkbox => checkbox.checked = true);
     filterTasks();
 }
 
