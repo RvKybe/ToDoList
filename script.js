@@ -79,6 +79,7 @@ function launchSort(sortParameter, needToConstruct = true) {
     }
     if (sort === 'date') {
         const sortMode = sortByDateComboboxValue === 'fromNew' ? -1 : 1;
+        sortByPriorityCombobox.value = 'none';
         sortTasks('dateTime', sortMode);
     } else {
         if (sortByPriorityComboBoxValue === 'none') {
@@ -359,17 +360,17 @@ function displayDiv(index) {
 }
 
 /**
- * Функия, которая контролирует видимость кнопок и текст на подсказках
+ * Функция, которая контролирует видимость кнопок и текст на подсказках
  * @param statusId - id статуса у задачи
  * @param index - порядковый номер задачи в filteredTasks
  */
 function changeStatusButtonsDisplay(statusId, index) {
     const statusUpButtonId = `status-up-button${index}`;
     const statusUpButton = document.getElementById(statusUpButtonId);
-    let statusUpButtonTargetDisplay = '';
-    let statusUpButtonTooltip = '';
     const statusDownButtonId = `status-down-button${index}`;
     const statusDownButton = document.getElementById(statusDownButtonId);
+    let statusUpButtonTargetDisplay = '';
+    let statusUpButtonTooltip = '';
     let statusDownButtonTargetDisplay = '';
     let statusDownButtonTooltip = '';
     switch(statusId) {
@@ -391,8 +392,8 @@ function changeStatusButtonsDisplay(statusId, index) {
             break;
     }
     changeElementDisplay(statusUpButtonId, statusUpButtonTargetDisplay);
-    statusUpButton.dataset.tooltip = statusUpButtonTooltip;
     changeElementDisplay(statusDownButtonId, statusDownButtonTargetDisplay);
+    statusUpButton.dataset.tooltip = statusUpButtonTooltip;
     statusDownButton.dataset.tooltip = statusDownButtonTooltip;
 }
 
@@ -403,9 +404,9 @@ function changeStatusButtonsDisplay(statusId, index) {
  */
 function getPriorityNameById(priorityId) {
     const priorityDictionary = {
-        '1': 'низкий',
-        '2': 'средний',
-        '3': 'высокий'
+        1: 'низкий',
+        2: 'средний',
+        3: 'высокий'
     };
     return priorityDictionary[priorityId];
 }
@@ -425,7 +426,7 @@ function getStatusColorById(statusId) {
 }
 
 /**
- *Функция, посылающая запрос GET
+ * Функция, посылающая запрос GET
  * @returns {Promise<void>}
  */
 async function sendGetRequest() {
