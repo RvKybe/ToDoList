@@ -1,9 +1,16 @@
+const mainContainer = document.getElementById('main'); // контейнер для страницы
+const outputContainer = document.getElementById('output');// контейнер для вывода
+const taskNameInput = document.getElementById('input-task-name');
+const priorityCombobox = document.getElementById('priority-add-task');
+const filterPriorityCombobox = document.getElementById('filter-priority');
+const checkboxes = Array.from(document.getElementById('checkboxesParent').children);
+const sortByDateCombobox = document.getElementById('sort-date');
+const sortByPriorityCombobox = document.getElementById('sort-priority');
+const taskSearchInput = document.getElementById('search-task-name');
 let tasks = []; // основной массив
 let filteredTasks = []; // массив, откуда забираются задачи для вывода
 let sort = 'date'; // способ сортировки. По умолчанию стоит по дате
 let showTooltipTimeout; // таймер показа подсказки
-const mainContainer = document.getElementById('main'); // контейнер для страницы
-const outputContainer = document.getElementById('output');// контейнер для вывода
 const HOST = 'http://127.0.0.1:3000/items';
 const HEADERS = {
     'accept': 'application/json',
@@ -11,13 +18,6 @@ const HEADERS = {
 };
 const MEDIUM_PRIORITY_ID = 2;
 const ACTIVE_STATUS_ID = 2;
-const taskNameInput = document.getElementById('input-task-name');
-const priorityCombobox = document.getElementById('priority-add-task');
-const taskSearchInput = document.getElementById('search-task-name');
-const filterPriorityCombobox = document.getElementById('filter-priority');
-const checkboxes = Array.from(document.getElementById('checkboxesParent').children);
-const sortByDateCombobox = document.getElementById('sort-date');
-const sortByPriorityCombobox = document.getElementById('sort-priority');
 sendGetRequest().then(() => {
     filterTasks();
 });
