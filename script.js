@@ -1,6 +1,6 @@
 let tasks = []; // основной массив
 let filteredTasks = []; // массив, откуда забираются задачи для вывода
-let sort = 'date'; // способо сортировки. По умолчанию стоит по дате
+let sort = 'date'; // способ сортировки. По умолчанию стоит по дате
 let showTooltipTimeout; // таймер показа подсказки
 const mainContainer = document.getElementById('main');
 const outputContainer = document.getElementById('output');
@@ -100,9 +100,9 @@ function launchSort(sortParameter, needToConstruct = true) {
 
 /**
  * Функция сортировки
- * @param sortParameter - Основной параметр сортировки
- * @param sortMode - Вид сортировки
- * @param alternativeSortParameter - Дополнительный параметр сортировки
+ * @param sortParameter - основной параметр сортировки
+ * @param sortMode - вид сортировки (по убывынию или по возрастанию)
+ * @param alternativeSortParameter - дополнительный параметр сортировки
  * @param alternativeSortMode - дополнительный вид сортировки
  */
 function sortTasks(sortParameter, sortMode, alternativeSortParameter, alternativeSortMode) {
@@ -262,7 +262,7 @@ function searchDuplicate(taskName) {
 
 /**
  * Удаляет задачу
- * @param index - номер задачи в filteredTasks
+ * @param index - порядковый номер задачи в filteredTasks
  */
 async function deleteItem(index) {
     if (confirm('Вы уверены?')) {
@@ -305,7 +305,7 @@ function clearInput() {
 
 /**
  * Сохраняет правки в названии задачи, если не существует задачи с таким же названием
- * @param index - индекс в filteredTasks объекта для изменения
+ * @param index - порядковый номер задачи в filteredTasks
  */
 async function saveChangedTask(index) {
     const changedTask = filteredTasks[index];
@@ -325,7 +325,7 @@ async function saveChangedTask(index) {
 
 /**
  * Изменяет статус задачи
- * @param index - номер задачи в filteredTasks
+ * @param index - порядковый номер задачи в filteredTasks
  * @param difference - разница между старым и новым статусом задачи
  */
 async function changeTaskStatus(index, difference) {
@@ -339,7 +339,7 @@ async function changeTaskStatus(index, difference) {
 /**
  * Показывает <textarea> изменения названия после щелчка по <div>, скрывая <div> с названием задачи
  * Сохраняет высоту <div> и назначает её же textarea
- * @param index - индекс задачи в filteredTasks
+ * @param index - порядковый номер задачи в filteredTasks
  */
 function displayInput(index) {
     const divHeight = getComputedStyle(document.getElementById(`task-name-div${index}`)).height;
@@ -352,7 +352,7 @@ function displayInput(index) {
 
 /**
  * Показывает <div> с названием задачи, скрывая <textarea> изменения названия
- * @param index - индекс задачи в filteredTasks
+ * @param index - порядковый номер задачи в filteredTasks
  */
 function displayDiv(index) {
     changeElementDisplay(`task-name-div${index}`, 'block');
@@ -362,7 +362,7 @@ function displayDiv(index) {
 /**
  * Функия, которая контролирует видимость кнопок и текст на подсказках
  * @param statusId - id статуса у задачи
- * @param index - индекс задачи в filteredTasks
+ * @param index - порядковый номер задачи в filteredTasks
  */
 function changeStatusButtonsDisplay(statusId, index) {
     let statusUpButtonTargetDisplay = '';
