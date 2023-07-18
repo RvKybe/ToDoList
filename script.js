@@ -364,12 +364,14 @@ function displayDiv(index) {
  * @param index - порядковый номер задачи в filteredTasks
  */
 function changeStatusButtonsDisplay(statusId, index) {
+    const statusUpButtonId = `status-up-button${index}`;
+    const statusUpButton = document.getElementById(statusUpButtonId);
     let statusUpButtonTargetDisplay = '';
     let statusUpButtonTooltip = '';
-    const statusUpButtonId = `status-up-button${index}`;
+    const statusDownButtonId = `status-down-button${index}`;
+    const statusDownButton = document.getElementById(statusDownButtonId);
     let statusDownButtonTargetDisplay = '';
     let statusDownButtonTooltip = '';
-    const statusDownButtonId = `status-down-button${index}`;
     switch(statusId) {
         case 1:
             statusUpButtonTargetDisplay = 'block';
@@ -389,9 +391,9 @@ function changeStatusButtonsDisplay(statusId, index) {
             break;
     }
     changeElementDisplay(statusUpButtonId, statusUpButtonTargetDisplay);
-    document.getElementById(statusUpButtonId).dataset.tooltip = statusUpButtonTooltip;
+    statusUpButton.dataset.tooltip = statusUpButtonTooltip;
     changeElementDisplay(statusDownButtonId, statusDownButtonTargetDisplay);
-    document.getElementById(statusDownButtonId).dataset.tooltip = statusDownButtonTooltip;
+    statusDownButton.dataset.tooltip = statusDownButtonTooltip;
 }
 
 /**
