@@ -2,8 +2,8 @@ let tasks = []; // основной массив
 let filteredTasks = []; // массив, откуда забираются задачи для вывода
 let sort = 'date'; // способ сортировки. По умолчанию стоит по дате
 let showTooltipTimeout; // таймер показа подсказки
-const mainContainer = document.getElementById('main');
-const outputContainer = document.getElementById('output');
+const mainContainer = document.getElementById('main'); // контейнер для страницы
+const outputContainer = document.getElementById('output');// контейнер для вывода
 const HOST = 'http://127.0.0.1:3000/items';
 const HEADERS = {
     'accept': 'application/json',
@@ -16,7 +16,7 @@ sendGetRequest().then(() => {
 });
 
 /**
- * Добавление задачи
+ * Функция, которая добавляет задачу
  */
 async function addTask() {
     const taskNameInput = document.getElementById('input-task-name');
@@ -43,7 +43,7 @@ async function addTask() {
 }
 
 /**
- * Фильтр подходящих задач
+ * Функция фильтрации подходящих задач
  */
 function filterTasks() {
     const taskSearchInput = document.getElementById('search-task-name');
@@ -68,7 +68,6 @@ function filterTasks() {
  * Функция, вызывающая функции сортировки в зависимости от основного параметра сортировки
  * @param sortParameter - основной параметр сортировки
  * @param needToConstruct - нужен для отделения сортировки по нажатию кнопки от сортировки в filterTasks
- * Если параметр не задан, то вывод будет построен
  */
 function launchSort(sortParameter, needToConstruct = true) {
     const sortByDateCombobox = document.getElementById('sort-date');
@@ -138,7 +137,7 @@ function switchComboboxHighlight() {
 }
 
 /**
- * Конструтор вывода
+ * Функция-конструтор вывода
  */
 function outputConstructor() {
     outputContainer.innerHTML = '';
