@@ -1,90 +1,46 @@
 let tasks = []; // основной массив
 let filteredTasks = []; // 'внешний' массив
-const Page = document.getElementById('main');
-const outputDiv = document.getElementById('output');
+const mainContainer = document.getElementById('main');
+const outputContainer = document.getElementById('output');
 let sort = 'date';
 let showTooltipTimeout;
-requestGet().then(() => filterTasks());
+const HOST = 'http://127.0.0.1:3000/items';
+const HEADERS = {
+    'accept': 'application/json',
+    'Content-Type': 'application/json'
+};
+const MEDIUM_PRIORITY_ID = 2;
+sendGetRequest().then(() => {
+    filterTasks();
+});
 
-/**
- * Функция, вызывающая функции сортировки в зависимости от основного параметра сортировки
- * @param sortParameter - основной параметр сортировки
- * @param needToConstruct - нужен для отделения сортировки по нажатию кнопки от сортировки в filterTasks
- * Если параметр не задан, то вывод будет построен
- */
-function launchSort(sortParameter, needToConstruct = true) {
-    const sortComboBoxDate = document.getElementById('sort-date');
-    const sortComboBoxDateValue = sortComboBoxDate.value;
-    const sortComboBoxPriority = document.getElementById('sort-priority');
-    const sortComboBoxPriorityValue = sortComboBoxPriority.value;
-
-    sort = sortParameter === 'date' ? 'date' : 'priority';
-    const anotherSort = sort === 'date' ? 'priority' : 'date';
-    if (sort === 'date') {
-        const sortMode = sortComboBoxDateValue === 'fromNew' ? -1 : 1;
-        sortTasks('dateTime', sortMode);
-    } else {
-        if (sortComboBoxPriorityValue === 'none') {
-            sort = 'date';
-            launchSort(sort);
-            return;
-        } else {
-            const sortMode = (sortComboBoxPriorityValue === 'fromHigh') ? -1 : 1;
-            const alternativeSortMode = (sortComboBoxDateValue === 'fromNew') ? -1 : 1;
-            sortTasks('priority', sortMode, 'dateTime', alternativeSortMode);
-        }
-    }
-    if (needToConstruct) {
-        outputConstructor();
-    }
-    highlight(sort);
-    removeHighlight(anotherSort);
-}
 
 /**
  * Добавление задачи
  */
-function addTask() {
+async function addTask() {
     const taskNameInput = document.getElementById('input-task-name');
     const priorityCombobox = document.getElementById('priority-add-task');
-    const comboBoxPriorityValue = priorityCombobox.value;
+    const priorityComboBoxValue = priorityCombobox.value;
     const taskName = taskNameInput.value;
-    const mediumStatusIndex = 2;
     if (!taskName.trim()) {
         alert('Введите название задачи');
     } else if (!tasks.length || !searchDuplicate(taskName)) {
-        const status = mediumStatusIndex;
+        const status = MEDIUM_PRIORITY_ID;
         const dateTime = new Date();
         const outputDateTime = dateTime.toLocaleString('ru-RU');
         const newTask = {
-            'priority' : comboBoxPriorityValue,
-            'name' : taskNameInput.value,
-            'outputDateTime' : outputDateTime,
-            'status' : status,
-            'dateTime' : dateTime,
+            priorityId: priorityComboBoxValue,
+            name: taskName,
+            outputDateTime,
+            statusId: status,
+            dateTime,
         };
-        requestPost(newTask)
-            .then(() => {
-                requestGet()
-                    .then(() => filterTasks());
-            });
+        await sendPostRequest(newTask);
+        await sendGetRequest();
+        filterTasks();
     }
     clearInput();
-}
-
-/**
- * Функция проверки на существование задачи
- * @param taskName - название задачи
- * @returns {boolean} возвращает true, если дубликат был найден
- */
-function searchDuplicate(taskName) {
-    const duplicateExist = tasks.some((task, j) => {
-        return task['name'].trim() === taskName.trim();
-    });
-    if (duplicateExist) {
-        alert('Такая задача уже существует');
-    }
-    return duplicateExist;
 }
 
 /**
@@ -100,15 +56,47 @@ function filterTasks() {
         .filter(checkBox => checkBox.checked)
         .map(checkBox => Number(checkBox.dataset.attr));
     filteredTasks = tasks.filter((task) => {
-        return selectedStatusIds.includes(task['status']) &&
-            (!taskSearchValue.trim() || task['name'].toLowerCase().indexOf(taskSearchInput.value.toLowerCase()) > -1) &&
-            (filterPriorityValue === '-1' || filterPriorityValue === task['priority']);
+        return selectedStatusIds.includes(task.statusId) &&
+            (!taskSearchValue.trim() || task.name.toLowerCase().indexOf(taskSearchValue.toLowerCase()) > -1) &&
+            (Number(filterPriorityValue) === -1 || filterPriorityValue === task.priority);
     });
-    launchSort(sort, false);
+    launchSort(null, false);
     outputConstructor();
-    changeElementDisplayStyle('loading', 'none');
-    changePageOpacity(1);
+    switchPreloaderDisplay();
+}
 
+/**
+ * Функция, вызывающая функции сортировки в зависимости от основного параметра сортировки
+ * @param sortParameter - основной параметр сортировки
+ * @param needToConstruct - нужен для отделения сортировки по нажатию кнопки от сортировки в filterTasks
+ * Если параметр не задан, то вывод будет построен
+ */
+function launchSort(sortParameter, needToConstruct = true) {
+    const sortByDateCombobox = document.getElementById('sort-date');
+    const sortByDateComboboxValue = sortByDateCombobox.value;
+    const sortByPriorityCombobox = document.getElementById('sort-priority');
+    const sortByPriorityComboBoxValue = sortByPriorityCombobox.value;
+    if (sortParameter) {
+        sort = sortParameter;
+    }
+    if (sort === 'date') {
+        const sortMode = sortByDateComboboxValue === 'fromNew' ? -1 : 1;
+        sortTasks('dateTime', sortMode);
+    } else {
+        if (sortByPriorityComboBoxValue === 'none') {
+            sort = 'date';
+            launchSort(null);
+            return;
+        } else {
+            const sortMode = sortByPriorityComboBoxValue === 'fromHigh' ? -1 : 1;
+            const alternativeSortMode = sortByDateComboboxValue === 'fromNew' ? -1 : 1;
+            sortTasks('priority', sortMode, 'dateTime', alternativeSortMode);
+        }
+    }
+    if (needToConstruct) {
+        outputConstructor();
+    }
+    switchComboboxHighlight(sort);
 }
 
 /**
@@ -116,7 +104,7 @@ function filterTasks() {
  * @param sortParameter - Основной параметр сортировки
  * @param sortMode - Вид сортировки
  * @param alternativeSortParameter - Дополнительный параметр сортировки
- * @param alternativeSortMode - дополнительный параметр сортировки
+ * @param alternativeSortMode - дополнительный вид сортировки
  */
 function sortTasks(sortParameter, sortMode, alternativeSortParameter, alternativeSortMode) {
     filteredTasks = filteredTasks.sort((a, b) => {
@@ -136,37 +124,26 @@ function sortTasks(sortParameter, sortMode, alternativeSortParameter, alternativ
 }
 
 /**
- * Удаляет задачу
- * @param index - номер задачи в filteredTasks
+ * Функция выделения комбобокса сортировки
  */
-function deleteItem(index) {
-    if (confirm('Вы уверены?')) {
-            requestDelete( filteredTasks[index].id)
-                .then(() => {
-                    requestGet()
-                        .then(() => filterTasks())
-                });
+function switchComboboxHighlight() {
+    const sortByDateComboboxClassList = document.getElementById('sort-date').classList;
+    const sortByPriorityComboboxClassList = document.getElementById('sort-priority').classList;
+    if (sort === 'date') {
+        sortByDateComboboxClassList.add('combobox-highlight');
+        sortByPriorityComboboxClassList.remove('combobox-highlight');
+    } else {
+        sortByDateComboboxClassList.remove('combobox-highlight');
+        sortByPriorityComboboxClassList.add('combobox-highlight');
     }
-}
-
-/**
- * Вывод текста, который уведомляет, что tasks или filteredTasks пусты
- * @param text
- */
-function showText(text) {
-    outputDiv.innerHTML = `<div class='title'>
-                               <h2 class='title__item'>
-                                   ${text}
-                               </h2>
-                           </div>`;
 }
 
 /**
  * Конструтор вывода
  */
 function outputConstructor() {
-    outputDiv.innerHTML = '';
-    Page.append(outputDiv);
+    outputContainer.innerHTML = '';
+    mainContainer.append(outputContainer);
     if (!tasks.length) {
         showText('Лист задач пуст');
         return;
@@ -177,21 +154,20 @@ function outputConstructor() {
     }
     for (let i = 0; i < filteredTasks.length; i++) {
         const task = filteredTasks[i];
-        const priorityName = getPriorityNameById(task['priority']);
-        const backgroundColor = getColorByStatusId(task['status']);
-        const taskName = task['name'].trim();
+        const priorityName = getPriorityNameById(task.priorityId);
+        const backgroundColor = getStatusColorById(task.statusId);
+        const taskName = task.name.trim();
         let textColor;
         if (backgroundColor === '#FFFFFF') {
             textColor = '#f2db0c';
         } else {
             textColor = backgroundColor;
         }
-        outputDiv.innerHTML += `
-        <div id = 'output_div_${i}' 
+        outputContainer.innerHTML += `
+        <div id = 'output-div-${i}' 
              class='item output-area__item'>
             <div class='item__task-priority-block'> 
-                <span id='outputSpanId${i}' 
-                      style='color: ${textColor}'
+                <span style='color: ${textColor}'
                       class='item__task-priority'>
                       ${priorityName}
                 </span>
@@ -213,7 +189,7 @@ function outputConstructor() {
                               class='item__task-name-textarea'>
                     </textarea>
                     <div class='task__date-of-add' 
-                        <span>${task['outputDateTime']}</span>
+                        <span>${task.outputDateTime}</span>
                     </div>
                 </div>
                 <div class='main__status-buttons'>
@@ -252,16 +228,69 @@ function outputConstructor() {
         </div>    
     `;
         document.getElementById(`div-change${i}`).innerText = taskName;
-        changeStatusButtons(task['status'], i);
+        changeStatusButtonsDisplay(task.statusId, i);
     }
 }
 
 /**
- * Смена отображения элемента
+ * Функция переключения режима отображения прелоадера
+ */
+function switchPreloaderDisplay() {
+    const loaderVisibility = document.getElementById('loading').style.display;
+    if (loaderVisibility === 'none' || loaderVisibility === '') { // костыль, иначе не работает
+        changeElementDisplay('loading', 'flex');
+        changePageOpacity(0.4);
+    } else {
+        changeElementDisplay('loading', 'none');
+        changePageOpacity(1);
+    }
+}
+
+/**
+ * Функция проверки на существование задачи
+ * @param taskName - название задачи
+ * @returns {boolean} возвращает true, если дубликат был найден
+ */
+function searchDuplicate(taskName) {
+    const duplicateExist = tasks.some(task => {
+        return task.name.trim() === taskName.trim();
+    });
+    if (duplicateExist) {
+        alert('Такая задача уже существует');
+    }
+    return duplicateExist;
+}
+
+/**
+ * Удаляет задачу
+ * @param index - номер задачи в filteredTasks
+ */
+async function deleteItem(index) {
+    if (confirm('Вы уверены?')) {
+        await sendDeleteRequest( filteredTasks[index].id);
+        await sendGetRequest();
+        filterTasks();
+    }
+}
+
+/**
+ * Вывод текста, который уведомляет, что tasks или filteredTasks пусты
+ * @param text - текст-затычка для outputContainer при пустых массивах
+ */
+function showText(text) {
+    outputContainer.innerHTML = `<div class='title'>
+                                     <h2 class='title__item'>
+                                         ${text}
+                                     </h2>
+                                 </div>`;
+}
+
+/**
+ * Смена режима отображения элемента
  * @param elementId - id элемента
  * @param targetStatus - нужный статус
  */
-function changeElementDisplayStyle(elementId, targetStatus) {
+function changeElementDisplay(elementId, targetStatus) {
     document.getElementById(`${elementId}`).style.display = targetStatus;
 }
 
@@ -269,32 +298,28 @@ function changeElementDisplayStyle(elementId, targetStatus) {
  * Чистка полей ввода названия задачи и комбобокса приоритета задачи
  */
 function clearInput() {
-    const mediumPriorityValue = '2';
     const inputTaskName = document.getElementById('input-task-name');
     inputTaskName.value = '';
     const priorityCombobox = document.getElementById('priority-add-task');
-    priorityCombobox.value = mediumPriorityValue;
+    priorityCombobox.value = MEDIUM_PRIORITY_ID;
 }
 
 /**
- * Сохраняет правки в названии задачи и проверяет, есть ли другая задача с новым названием и тем же приоритето
- * Передаёт изменённую задачу и её индекс
+ * Сохраняет правки в названии задачи, если не существует задачи с таким же названием
  * @param index - индекс в filteredTasks объекта для изменения
  */
-function saveChangedTask(index) {
+async function saveChangedTask(index) {
     const changedTask = filteredTasks[index];
-    const newValue = document.getElementById(`textNode${index}`).value;
-    if (!searchDuplicate(newValue) && newValue.trim()) {
-        changedTask['name'] = newValue;
-        requestPut( changedTask, changedTask.id)
-            .then (() => {
-                requestGet()
-                    .then(() => filterTasks());
-            })
+    let newNameValue = document.getElementById(`textNode${index}`).value;
+    if (!searchDuplicate(newNameValue) && newNameValue.trim()) {
+        changedTask.name = newNameValue;
+        await sendPutRequest( changedTask, changedTask.id);
+        await sendGetRequest();
+        filterTasks();
     } else {
-        document.getElementById(`textNode${index}`).value = filteredTasks[index]['name'];
+        newNameValue = filteredTasks[index].name;
     }
-    if (!newValue.trim()) {
+    if (!newNameValue.trim()) {
         alert('Вы не можете оставить название поле пустым');
     }
 }
@@ -304,39 +329,35 @@ function saveChangedTask(index) {
  * @param index - номер задачи в filteredTasks
  * @param difference - разница между старым и новым статусом задачи
  */
-function changeTaskStatus(index, difference) {
+async function changeTaskStatus(index, difference) {
     const changedTask = filteredTasks[index];
-    changedTask['status'] += +difference;
-    requestPut( changedTask, changedTask.id)
-        .then(() => {
-            requestGet().
-                then(() => {
-                    filterTasks();
-                });
-        });
+    changedTask.statusId += +difference;
+    await sendPutRequest( changedTask, changedTask.id);
+    await sendGetRequest();
+    filterTasks();
 }
 
 /**
- * Показывает <input> изменения названия, скрывая <div> с названием задачи
+ * Показывает <textarea> изменения названия после щелчка по <div>, скрывая <div> с названием задачи
  * Сохраняет высоту <div> и назначает её же textarea
- * @param index - id задачи в filteredTasks
+ * @param index - индекс задачи в filteredTasks
  */
 function displayInput(index) {
     const divHeight = getComputedStyle(document.getElementById(`div-change${index}`)).height;
     document.getElementById(`textNode${index}`).style.height = (Number(divHeight.slice(0, -2)) - 6).toString() + 'px';
-    document.getElementById(`textNode${index}`).textContent = filteredTasks[index]['name'];
-    changeElementDisplayStyle(`div-change${index}`, 'none');
-    changeElementDisplayStyle(`textNode${index}`, 'block');
+    document.getElementById(`textNode${index}`).textContent = filteredTasks[index].name;
+    changeElementDisplay(`div-change${index}`, 'none');
+    changeElementDisplay(`textNode${index}`, 'block');
     document.getElementById(`textNode${index}`).focus();
 }
 
 /**
- * Показывает <div> с названием задачи, скрывая <input> изменения названия
+ * Показывает <div> с названием задачи, скрывая <textarea> изменения названия
  * @param index - индекс задачи в filteredTasks
  */
 function displayDiv(index) {
-    changeElementDisplayStyle(`div-change${index}`, 'block');
-    changeElementDisplayStyle(`textNode${index}`, 'none');
+    changeElementDisplay(`div-change${index}`, 'block');
+    changeElementDisplay(`textNode${index}`, 'none');
 }
 
 /**
@@ -344,21 +365,23 @@ function displayDiv(index) {
  * @param statusId - id статуса у задачи
  * @param index - индекс задачи в filteredTasks
  */
-function changeStatusButtons(statusId, index) {
+function changeStatusButtonsDisplay(statusId, index) {
     let statusUpButtonTargetDisplay = '';
-    let statusDownButtonTargetDisplay = '';
     let statusUpButtonTooltip = '';
+    const statusUpButtonId = `statusUpButton${index}`;
+    let statusDownButtonTargetDisplay = '';
     let statusDownButtonTooltip = '';
+    const statusDownButtonId = `statusDownButton${index}`;
     switch (statusId) {
         case 1:
             statusUpButtonTargetDisplay = 'block';
-            statusDownButtonTargetDisplay = 'none';
             statusUpButtonTooltip = 'Отметить задачу активной';
+            statusDownButtonTargetDisplay = 'none';
             break;
         case 2:
             statusUpButtonTargetDisplay = 'block';
-            statusDownButtonTargetDisplay = 'block';
             statusUpButtonTooltip = 'Отметить задачу решенной';
+            statusDownButtonTargetDisplay = 'block';
             statusDownButtonTooltip = 'Отметить задачу отменной';
             break;
         case 3:
@@ -367,14 +390,14 @@ function changeStatusButtons(statusId, index) {
             statusDownButtonTooltip = 'Отметить задачу активной';
             break;
     }
-    changeElementDisplayStyle(`statusUpButton${index}`, statusUpButtonTargetDisplay);
-    changeElementDisplayStyle(`statusDownButton${index}`, statusDownButtonTargetDisplay);
-    document.getElementById(`statusUpButton${index}`).dataset.tooltip = statusUpButtonTooltip;
-    document.getElementById(`statusDownButton${index}`).dataset.tooltip = statusDownButtonTooltip;
+    changeElementDisplay(statusUpButtonId, statusUpButtonTargetDisplay);
+    document.getElementById(statusUpButtonId).dataset.tooltip = statusUpButtonTooltip;
+    changeElementDisplay(statusDownButtonId, statusDownButtonTargetDisplay);
+    document.getElementById(statusDownButtonId).dataset.tooltip = statusDownButtonTooltip;
 }
 
 /**
- * Функция, которая возвращает название приоритета по его id
+ * Функция, которая возвращает название приоритета по id приоритета у задачи
  * @param priorityId - id приоритета у задачи
  * @returns {*}
  */
@@ -388,90 +411,73 @@ function getPriorityNameById(priorityId) {
 }
 
 /**
- * Функция, которая возвращает цвет по id статуса
- * @param colorId - id статуса у задачи
+ * Функция, которая возвращает цвет фона элементов по id статуса задачи
+ * @param statusId - id статуса у задачи
  * @returns {*}
  */
-function getColorByStatusId(colorId) {
+function getStatusColorById(statusId) {
     const colorDictionary = {
         1: '#ff6161',
         2: '#FFFFFF',
         3: '#80ff80'
     };
-    return colorDictionary[colorId];
+    return colorDictionary[statusId];
 }
 
 /**
  *Функция, посылающая запрос GET
  * @returns {Promise<void>}
  */
-async function requestGet() {
-    const host = 'http://127.0.0.1:3000/items';
-    changeElementDisplayStyle('loading', 'flex');
-    changePageOpacity(0.4);
-    const response = await fetch(host, {
-        method : 'GET'
+async function sendGetRequest() {
+    switchPreloaderDisplay();
+    const response = await fetch(`${HOST}`, {
+        method: 'GET'
     });
     tasks = await response.json();
 }
 
 /**
  * Функция, посылающая запрос POST
- * @param body
+ * @param body - посылаемая задача
  * @returns {Promise<void>}
  */
-async function requestPost(body) {
-    const host = 'http://127.0.0.1:3000/items';
-    const headers = {
-        'accept': 'application/json',
-        'Content-Type': 'application/json'
-    };
+async function sendPostRequest(body) {
+    switchPreloaderDisplay();
     body = JSON.stringify(body);
-    changeElementDisplayStyle('loading', 'flex');
-    changePageOpacity(0.4);
-    await fetch(host, {
-        method : 'POST',
-        headers,
+    await fetch(`${HOST}`, {
+        method: 'POST',
+        headers: HEADERS,
         body
     });
 }
 
 /**
  * Функция, посылающая запрос DELETE
- * @param id - id элемента на бэке
+ * @param id - id задачи
  * @returns {Promise<void>}
  */
-async function requestDelete(id) {
-    const host = 'http://127.0.0.1:3000/items';
-    changeElementDisplayStyle('loading', 'flex');
-    changePageOpacity(0.4);
-    await fetch(`${host}/${id}`, {
-        method : 'DELETE'
+async function sendDeleteRequest(id) {
+    switchPreloaderDisplay();
+    await fetch(`${HOST}/${id}`, {
+        method: 'DELETE'
     });
 }
 
 /**
  * Функция, посылающая запрос PUT
  * @param body - посылаемая задача
- * @param id - id задачи на бэке
+ * @param id - id задачи
  * @returns {Promise<void>}
  */
-async function requestPut(body, id) {
-    const host = 'http://127.0.0.1:3000/items';
-    const headers = {
-        'accept': 'application/json',
-        'Content-Type': 'application/json'
-    };
+async function sendPutRequest(body, id) {
+    switchPreloaderDisplay();
     body = JSON.stringify(body);
-    changeElementDisplayStyle('loading', 'flex');
-    changePageOpacity(0.4);
-    await fetch(`${host}/${id}`, {
-        method : 'PUT',
-        headers,
+    await fetch(`${HOST}/${id}`, {
+        method: 'PUT',
+        headers: HEADERS,
         body
     });
 }
-
 
 /**
  * Функция, которая меняет прозрачность страницы
@@ -489,7 +495,7 @@ function changePageOpacity(targetOpacity) {
 function expansionTextarea(element) {
     element.style.height = '5px';
     if (element.scrollHeight <= 150) {
-        element.style.height = (element.scrollHeight) + 'px';
+        element.style.height = element.scrollHeight + 'px';
     } else {
         element.style.height = '150px';
     }
@@ -501,7 +507,7 @@ function expansionTextarea(element) {
 function startSearch() {
     const searchTaskInput = document.getElementById('search-task-name');
     const searchTaskTextLength = searchTaskInput.value.length;
-    if (searchTaskTextLength  !== 1) {
+    if (searchTaskTextLength > 1) {
             filterTasks();
     }
 }
@@ -518,7 +524,6 @@ function defaultSort() {
     document.getElementById('checkbox-active').checked = true;
     document.getElementById('checkbox-done').checked = true;
     filterTasks();
-
 }
 
 /**
@@ -545,24 +550,7 @@ function showTooltip(event) {
  * @param event - onmouseleave
  */
 function hideTooltip(event) {
-    clearTimeout(showTooltipTimeout);
-    document.querySelectorAll('.tooltip').forEach(item => item.remove());
-}
-
-/**
- * Функция выделения комбобокса сортировки
- * id комбобокса сортировки состоит из sort- и параметра сортировки
- * @param idPiece - параметр сортировки как составная часть id комбобокса
- */
-function highlight(idPiece) {
-    document.getElementById(`sort-${idPiece}`).classList.add('combobox-highlight');
-}
-
-/**
- * Функция выделения комбобокса сортировки
- * id комбобокса сортировки состоит из sort- и параметра сортировки
- * @param idPiece - параметр сортировки как составная часть id комбобокса
- */
-function removeHighlight(idPiece) {
-    document.getElementById(`sort-${idPiece}`).classList.remove('combobox-highlight');
+    clearTimeout(showTooltipTimeout);   
+    document.querySelectorAll('.tooltip')
+        .forEach(item => item.remove());
 }
